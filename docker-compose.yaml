@@ -1,0 +1,13 @@
+version: "2.3"
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_SULOGIN}
+      POSTGRES_PASSWORD: ${DB_SUPASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
