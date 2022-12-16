@@ -13,7 +13,6 @@ CREATE TRIGGER delete_accounting_row
     FOR EACH ROW
     EXECUTE PROCEDURE delete_accounting_row();
 
--- TODO: Триггер на удаление строк старше 12 месяцев из accounting | DONE
 -- Триггер для удаления строк из таблицы accounting в случае, если прошло уже больше 12 месяцев
 CREATE OR REPLACE FUNCTION delete_old_accounting_row()
 RETURNS trigger AS $$
@@ -34,7 +33,7 @@ CREATE TRIGGER delete_old_accounting_row
     FOR EACH ROW
     EXECUTE PROCEDURE delete_old_accounting_row();
 
-/* TODO: Триггер для добавления имени пользователя в таблицу pupils при добавлении нового ученика | DONE
+/* Триггер для добавления имени пользователя в таблицу pupils при добавлении нового ученика
  * Плюс создание пользователя БД с именем, введённым при добавлении ученика
  * Если ник при добавлении ученика не введен, то он генерируется из ФИО ученика
  * Если ник уже занят, то к нему добавляется номер, начиная с 1                                     */

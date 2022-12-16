@@ -1,5 +1,5 @@
 /* Создание процедур */
--- TODO: Процедура для добавления ученика в таблицу учёта accounting | DONE
+-- Процедура для добавления ученика в таблицу учёта accounting
 CREATE OR REPLACE PROCEDURE add_pupil_to_accounting(pupil_id int, paid money, discount money, membership_id int)
 AS $$
 BEGIN

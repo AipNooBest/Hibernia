@@ -67,7 +67,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- TODO: Функция для выгрузки списка посещений из таблицы accounting за указанный период | DONE
+-- Функция для выгрузки списка посещений из таблицы accounting за указанный период
 CREATE OR REPLACE FUNCTION get_visits(start_year int, start_month int, end_year int, end_month int)
 RETURNS TABLE (date text, pupil_name text, visits int, group_name text, paid money, discount money, membership text)
 AS $$
