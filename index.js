@@ -24,7 +24,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.post('/api/v1/login', (req, res) => {
     // Если что, не факт, что у нас в куки лежит *только* токен, это надо будет проверить
     const { session } = req.header('cookie')?.split('=')[1];
-    if (session) return res.status(400).send('You are already logged in');
+    if (session) return res.status(400).json({ error: 'You are already logged in' });
 
     const { username, password, remember } = req.body;
     if (!username || !password) {
@@ -38,12 +38,13 @@ app.post('/api/v1/login', (req, res) => {
         database: process.env.DB_NAME,
     });
     pool.connect((err) => {
-        if (err) return res.status(500).send('Error connecting to database');
+        if (err.routine === 'auth_failed') return res.status(401).json({ error: 'Invalid username or password' });
+        if (err) return res.status(500).json({ error: 'Error connecting to database' });
 
         const token = generateSessionToken();
         pools[token] = pool;
         res.setHeader('Set-Cookie', `session=${token}; HttpOnly ${(Boolean(remember) === true ? '; Max-Age=31536000' : '')}`);
-        res.status(200).send('Logged in');
+        res.status(200).json({ status: "success", message: "Logged in" });
     });
 });
 
@@ -54,13 +55,13 @@ app.get('/api/v1/logout', (req, res) => {
 
     pool.end();
     delete pools[session];
-    res.status(200).send('{ "status": "ok" }');
+    res.status(200).json({ status: "success", message: "Logged out" });
 });
 
 app.get('/api/v1/user/profile', checkSession, (req, res) => {
     const pool = req.pool;
     pool.query('SELECT * FROM view_pupils', (err, result) => {
-        if (err) return res.status(500).send('Error querying database');
+        if (err) return res.status(500).json({ error: 'Error connecting to database' });
         res.status(200).json(result.rows);
     });
 });
@@ -70,7 +71,7 @@ app.get('/api/v1/user/unpaid', checkSession, (req, res) => {
     pool.query('SELECT * FROM view_unpaid_visits', (err, result) => {
         if (err) {
             console.log(err);
-            return res.status(500).send('Error querying database');
+            return res.status(500).json({ error: 'Error connecting to database' });
         }
         res.status(200).json(result.rows);
     });
@@ -93,7 +94,7 @@ app.get('/api/v1/user/visits', checkSession, (req, res) => {
     pool.query('SELECT * FROM get_visits($1, $2, $3, $4)', [start_year, start_month, end_year, end_month], (err, result) => {
         if (err) {
             console.log(err);
-            return res.status(500).send('Error querying database');
+            return res.status(500).json({ error: 'Error connecting to database' });
         }
         res.status(200).json(result.rows);
     });
@@ -102,7 +103,7 @@ app.get('/api/v1/user/visits', checkSession, (req, res) => {
 app.get('/api/v1/groups/schedule', checkSession, (req, res) => {
     const pool = req.pool;
     pool.query('SELECT * FROM groups_schedule', (err, result) => {
-        if (err) return res.status(500).send('Error querying database');
+        if (err) return res.status(500).json({ error: 'Error connecting to database' });
         res.status(200).json(result.rows);
     });
 })
@@ -110,7 +111,7 @@ app.get('/api/v1/groups/schedule', checkSession, (req, res) => {
 app.get('/api/v1/groups', checkSession, (req, res) => {
     const pool = req.pool;
     pool.query('SELECT * FROM get_group_name()', (err, result) => {
-        if (err) return res.status(500).send('Error querying database');
+        if (err) return res.status(500).json({ error: 'Error connecting to database' });
         res.status(200).json(result.rows);
     });
 });
@@ -118,8 +119,10 @@ app.get('/api/v1/groups', checkSession, (req, res) => {
 app.get('/api/v1/groups/:id', checkSession, (req, res) => {
     const pool = req.pool;
     const { id } = req.params;
+    if (!id) return res.status(400).json({ error: 'Group id is required' });
+    if (!isInteger(id)) return res.status(400).json({ error: 'Group id must be an integer' });
     pool.query('SELECT * FROM get_group_memberships($1)', [id], (err, result) => {
-        if (err) return res.status(500).send('Error querying database');
+        if (err) return res.status(500).json({ error: 'Error connecting to database' });
         res.status(200).json(result.rows);
     });
 });
