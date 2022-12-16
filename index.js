@@ -22,7 +22,11 @@ if (process.env.NODE_ENV !== 'production') {
 // Удачи поднять всё это дело хоть как-то :^)
 
 app.post('/api/v1/login', (req, res) => {
-    const { username, password } = req.body;
+    // Если что, не факт, что у нас в куки лежит *только* токен, это надо будет проверить
+    const { session } = req.header('cookie')?.split('=')[1];
+    if (session) return res.status(400).send('You are already logged in');
+
+    const { username, password, remember } = req.body;
     if (!username || !password) {
         return res.status(400).json({ error: 'Username and password are required' });
     }
@@ -38,21 +42,19 @@ app.post('/api/v1/login', (req, res) => {
 
         const token = generateSessionToken();
         pools[token] = pool;
-        res.setHeader('Set-Cookie', `session=${token}`);
+        res.setHeader('Set-Cookie', `session=${token}; HttpOnly ${(Boolean(remember) === true ? '; Max-Age=31536000' : '')}`);
         res.status(200).send('Logged in');
     });
 });
 
 app.get('/api/v1/logout', (req, res) => {
-    const token = req.cookies.session;
-    if (!token) return res.status(400).send('No session token found');
-
-    const pool = pools[token];
-    if (!pool) return res.status(400).json({error: 'No session token found'});
+    const session = req.header('cookie')?.split('=')[1];
+    const pool = pools[session];
+    if (!pool || !session) return res.status(302).redirect('/login');
 
     pool.end();
-    delete pools[token];
-    res.status(200).send('Logged out');
+    delete pools[session];
+    res.status(200).send('{ "status": "ok" }');
 });
 
 app.get('/api/v1/user/profile', checkSession, (req, res) => {
@@ -66,15 +68,33 @@ app.get('/api/v1/user/profile', checkSession, (req, res) => {
 app.get('/api/v1/user/unpaid', checkSession, (req, res) => {
     const pool = req.pool;
     pool.query('SELECT * FROM view_unpaid_visits', (err, result) => {
-        if (err) return res.status(500).send('Error querying database');
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Error querying database');
+        }
         res.status(200).json(result.rows);
     });
 });
 
 app.get('/api/v1/user/visits', checkSession, (req, res) => {
     const pool = req.pool;
-    pool.query('SELECT * FROM get_visits()', (err, result) => {
-        if (err) return res.status(500).send('Error querying database');
+    let { start_year, start_month , end_year, end_month } = req.query;
+    if (!start_year || !start_month || !end_year || !end_month)
+        return res.status(400).json({ error: 'Start and end dates are required' });
+    if (!isInteger(start_year) || !isInteger(start_month) || !isInteger(end_year) || !isInteger(end_month))
+        return res.status(400).json({ error: 'Dates must be integers' });
+    if (start_year > end_year || (start_year === end_year && start_month > end_month))
+        return res.status(400).json({ error: 'Start date must be before end date' });
+    if (!end_year || !end_month) {
+        end_year = new Date().getFullYear();
+        end_month = new Date().getMonth();
+    }
+
+    pool.query('SELECT * FROM get_visits($1, $2, $3, $4)', [start_year, start_month, end_year, end_month], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Error querying database');
+        }
         res.status(200).json(result.rows);
     });
 });
@@ -98,7 +118,7 @@ app.get('/api/v1/groups', checkSession, (req, res) => {
 app.get('/api/v1/groups/:id', checkSession, (req, res) => {
     const pool = req.pool;
     const { id } = req.params;
-    pool.query('SELECT * FROM get_group($1)', [id], (err, result) => {
+    pool.query('SELECT * FROM get_group_memberships($1)', [id], (err, result) => {
         if (err) return res.status(500).send('Error querying database');
         res.status(200).json(result.rows);
     });
@@ -109,13 +129,19 @@ function generateSessionToken() {
 }
 
 function checkSession(req, res, next) {
-    const token = req.cookies.session;
-    if (!token) return res.status(400).send('No session token found');
-
+    const token = req.headers.cookie.split('=')[1];
     const pool = pools[token];
-    if (!pool) return res.status(400).send('No session token found');
+    if (!pool || !token) return res.status(303).redirect('/api/v1/login');
     req.pool = pool;
     next();
+}
+
+function isInteger(value) {
+    return /^\d+$/.test(value);
+}
+
+function sanitizeString(str) {
+    return str.replace(/[^a-zA-Z0-9]/g, '');
 }
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
