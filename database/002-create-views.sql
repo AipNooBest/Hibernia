@@ -15,7 +15,7 @@ GRANT SELECT ON TABLE view_pupils TO teacher, pupil;
 CREATE VIEW view_unpaid_visits AS
     SELECT concat_ws(' ', last_name, first_name, second_name) AS full_name,
            membership,
-           (SELECT price - paid - discount AS total)
+           (SELECT price - paid - discount) as debt
     FROM accounting
     JOIN pupils ON pupil_id = pupils.id
     JOIN membership_type ON active_membership_id = membership_type.id
