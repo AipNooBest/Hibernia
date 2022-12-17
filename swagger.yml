@@ -10,6 +10,14 @@ servers:
   - url: http://localhost:3000/api/v1
     description: Local server
 
+tags:
+  - name: auth
+    description: Методы авторизации
+  - name: user
+    description: Методы для работы с пользователями
+  - name: groups
+    description: Методы для работы с группами
+
 paths:
   /login:
     post:
@@ -53,6 +61,8 @@ paths:
                 type: object
                 description: Сообщение об ошибке
                 example: { error: 'Error connecting to database' }
+      tags:
+        - auth
 
   /logout:
     get:
@@ -76,6 +86,8 @@ paths:
                   type: object
                   description: Сообщение об ошибке
                   example: { error: 'Unauthorized' }
+        tags:
+          - auth
 
   /user/profile/:
     get:
@@ -90,6 +102,22 @@ paths:
               schema:
                 type: array
                 description: Данные пользователя
+                properties:
+                  full_name:
+                    type: string
+                    description: Имя пользователя
+                  age:
+                    type: integer
+                    description: Возраст пользователя
+                  sex:
+                    type: string
+                    description: Пол пользователя
+                  status:
+                    type: string
+                    description: Статус пользователя
+                  group_name:
+                    type: string
+                    description: Название группы, в которой занимается ученик
                 example: [{ full_name: "Данилов Денис Олегович", age: 20, sex: 'Мужской', status: 'Постоянно посещает занятия', group_name: 'Проспект Вернадского' }]
         401:
           description: Неавторизованный запрос
@@ -107,6 +135,8 @@ paths:
                 type: object
                 description: Сообщение об ошибке
                 example: { error: 'Error connecting to database' }
+      tags:
+        - user
 
   /user/unpaid:
     get:
@@ -138,6 +168,8 @@ paths:
                 type: object
                 description: Сообщение об ошибке
                 example: { error: 'Error connecting to database' }
+      tags:
+        - user
 
   /visits:
     get:
@@ -231,6 +263,8 @@ paths:
                 type: object
                 description: Сообщение об ошибке
                 example: { error: 'Error connecting to database' }
+      tags:
+        - groups
 
   /groups/schedule:
     get:
@@ -273,6 +307,8 @@ paths:
                 type: object
                 description: Сообщение об ошибке
                 example: { error: 'Error connecting to database' }
+      tags:
+        - groups
 
   /groups/{id}:
     get:
@@ -299,3 +335,5 @@ paths:
                     { id: 1, name: "Абонемент на 1 месяц", price: 4400, group_id: 1 },
                     { id: 5, name: "Абонемент на 4 занятия", price: 3000, group_id: 1 },
                     { id: 9, name: "Разовое занятие", price: 850, group_id: 1 } ]
+      tags:
+        - groups
