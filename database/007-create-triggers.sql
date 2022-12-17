@@ -19,7 +19,6 @@ RETURNS trigger AS $$
 DECLARE
     accounting_date date;
 BEGIN
-    current_date := now();
     accounting_date := get_date(NEW.acc_year, NEW.acc_month);
     IF current_date - accounting_date > '12 months'::interval THEN
         DELETE FROM accounting WHERE acc_year = NEW.acc_year AND acc_month = NEW.acc_month;

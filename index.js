@@ -26,7 +26,7 @@ app.use(function (req, res, next) {
 
 app.post('/api/v1/login', (req, res) => {
     // Если что, не факт, что у нас в куки лежит *только* токен, это надо будет проверить
-    const { session } = req.header('cookie')?.split('=')[1];
+    const session = req.header('cookie')?.split('=')[1];
     if (session) return res.status(400).json({ error: 'You are already logged in' });
 
     const { username, password, remember } = req.body;
@@ -43,12 +43,11 @@ app.post('/api/v1/login', (req, res) => {
     pool.connect((err) => {
         if (err.routine === 'auth_failed') return res.status(401).json({ error: 'Invalid username or password' });
         if (err) return res.status(500).json({ error: 'Error connecting to database' });
-
-        const token = generateSessionToken();
-        pools[token] = pool;
-        res.setHeader('Set-Cookie', `session=${token}; HttpOnly ${(Boolean(remember) === true ? '; Max-Age=31536000' : '')}`);
-        res.status(200).json({ status: "success", token });
     });
+    const token = generateSessionToken();
+    pools[token] = pool;
+    res.setHeader('Set-Cookie', `session=${token}; HttpOnly ${(Boolean(remember) === true ? '; Max-Age=31536000' : '')}`);
+    res.status(200).json({ status: "success", token: token });
 });
 
 app.get('/api/v1/logout', (req, res) => {
