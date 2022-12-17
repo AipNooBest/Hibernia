@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const pg = require('pg');
 const app = express();
 const port = 3000;
@@ -16,11 +17,12 @@ if (process.env.NODE_ENV !== 'production') {
  *  Переделать авторизацию с cookie на JWT
  */
 
-
-// Вообще, всё пока лежит в куче, потому что я это писал на скорую руку на рабочем месте
-// Я этот код даже не запускал, так что не удивляйтесь, если он не работает
-// Позже я разнесу всё по разным файлам и сделаю нормальную структуру
-// Удачи поднять всё это дело хоть как-то :^)
+app.use(bodyParser.json());
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 app.post('/api/v1/login', (req, res) => {
     // Если что, не факт, что у нас в куки лежит *только* токен, это надо будет проверить
