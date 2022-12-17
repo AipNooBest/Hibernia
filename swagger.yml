@@ -68,14 +68,14 @@ paths:
                   type: object
                   description: Статус ответа
                   example: { status: 'success', message: 'Logged out' }
-          302:
-            description: Перенаправление на страницу авторизации
+          401:
+            description: Пользователь и так не авторизован
             content:
               application/json:
                 schema:
                   type: object
                   description: Сообщение об ошибке
-                  example: { error: 'Error connecting to database' }
+                  example: { error: 'Unauthorized' }
 
   /user/profile/:
     get:
@@ -145,14 +145,33 @@ paths:
       description: |
         Получение списка посещений за определённый период времени. Возвращает дату, имя ученика, количество посещений,
         название группы, уплаченную сумму, скидку и тип абонемента.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              description: Данные для запроса
-              example: { start_year: 2022, start_month: 1, end_year: 2022, end_month: 2 }
-        required: true
+      parameters:
+        - in: query
+          name: start_year
+          schema:
+            type: integer
+            format: int32
+          required: true
+          description: Год начала периода
+        - in: query
+          name: start_month
+          schema:
+            type: integer
+            format: int32
+            description: Месяц начала периода
+          required: true
+        - in: query
+          name: end_year
+          schema:
+            type: integer
+            format: int32
+            description: Год конца периода
+        - in: query
+          name: end_month
+          schema:
+            type: integer
+            format: int32
+            description: Месяц конца периода
       responses:
         200:
           description: Список посещений
@@ -238,6 +257,14 @@ paths:
                 type: object
                 description: Сообщение об ошибке
                 example: { error: 'Unauthorized' }
+        403:
+          description: Нет доступа
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Сообщение об ошибке
+                example: { error: 'Forbidden' }
         500:
           description: Ошибка сервера
           content:
@@ -247,7 +274,7 @@ paths:
                 description: Сообщение об ошибке
                 example: { error: 'Error connecting to database' }
 
-  /groups/{:id}:
+  /groups/{id}:
     get:
       summary: Получение информации об абонементах, доступных данной группе
       description: |
