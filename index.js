@@ -47,7 +47,7 @@ app.post('/api/v1/login', (req, res) => {
         const token = generateSessionToken();
         pools[token] = pool;
         res.cookie('session', token, { maxAge: remember ? 1000 * 60 * 60 * 24 * 7 : null });
-        res.status(200).json({ status: 'success', message: 'Logged in' });
+        res.status(200).json({ status: 'success', token });
     });
 });
 
@@ -135,6 +135,7 @@ function generateSessionToken() {
 }
 
 function checkSession(req, res, next) {
+    if (process.env.NODE_ENV === 'development') return next();
     const token = req.headers.cookie.split('=')[1];
     const pool = pools[token];
     if (!pool || !token) return res.status(401).json({ error: 'Unauthorized' });
