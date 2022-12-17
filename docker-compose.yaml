@@ -15,7 +15,7 @@ services:
       - ./database:/docker-entrypoint-initdb.d/
 
   hibernia:
-    image: nodejs
+    image: node
     container_name: hibernia_backend
     restart: always
     environment:
@@ -27,3 +27,5 @@ services:
     # По-хорошему исходники надо все хранить в src, ибо тут они будут вместе с database, но пока так
     volumes:
         - ./:/app
+    working_dir: /app
+    command: bash -c "npm install && node index.js"
