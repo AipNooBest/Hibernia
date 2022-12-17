@@ -7,15 +7,15 @@ info:
         Для работы с API необходимо авторизоваться в системе и получить токен доступа.
 
 servers:
-  - url: http://hibernia/api/v1
-    description: Staging server
+  - url: http://localhost:3000/api/v1
+    description: Local server
 
 paths:
   /login:
     post:
       summary: Авторизация
       description: |
-        Авторизация в системе. Устанавливает в куки токен доступа в виде переменной `session`
+        Авторизация в системе. Устанавливает в куки токен доступа в виде переменной `session` и возвращает его в теле ответа.
       requestBody:
         content:
           application/json:
@@ -35,30 +35,240 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  message:
-                    type: object
-                    description: Статус ответа
-                    example: { status: 'success', message: 'Logged in' }
+                description: Статус ответа
+                example: { status: 'success', token: 'xo77759j3a8xr694tnuwna' }
         401:
           description: Неверный логин или пароль
           content:
             application/json:
               schema:
                 type: object
-                properties:
-                  message:
-                    type: object
-                    description: Сообщение об ошибке
-                    example: { error: 'Invalid username or password' }
+                description: Сообщение об ошибке
+                example: { error: 'Invalid username or password' }
         500:
           description: Ошибка сервера
           content:
             application/json:
               schema:
                 type: object
-                properties:
-                  message:
-                    type: object
-                    description: Сообщение об ошибке
-                    example: { error: 'Error connecting to database' }
+                description: Сообщение об ошибке
+                example: { error: 'Error connecting to database' }
+
+  /logout:
+    get:
+        summary: Выход из системы
+        description: |
+            Выход из системы. Удаляет из куки токен доступа.
+        responses:
+          200:
+            description: Успешная авторизация
+            content:
+              application/json:
+                schema:
+                  type: object
+                  description: Статус ответа
+                  example: { status: 'success', message: 'Logged out' }
+          302:
+            description: Перенаправление на страницу авторизации
+            content:
+              application/json:
+                schema:
+                  type: object
+                  description: Сообщение об ошибке
+                  example: { error: 'Error connecting to database' }
+
+  /user/profile/:
+    get:
+      summary: Получение профиля через витрину view_pupils из базы данных
+      description: |
+        Получение данных пользователя. Возвращает имя, возраст, пол, статус и название группы, в которой занимается ученик.
+      responses:
+        200:
+          description: Данные пользователя
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Данные пользователя
+                example: [{ full_name: "Данилов Денис Олегович", age: 20, sex: 'Мужской', status: 'Постоянно посещает занятия', group_name: 'Проспект Вернадского' }]
+        401:
+          description: Неавторизованный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Сообщение об ошибке
+                example: { error: 'Unauthorized' }
+        500:
+          description: Ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Сообщение об ошибке
+                example: { error: 'Error connecting to database' }
+
+  /user/unpaid:
+    get:
+      summary: Получение списка непогашенных задолженностей
+      description: |
+        Получение списка непогашенных задолженностей. Возвращает дату, сумму и статус задолженности.
+      responses:
+        200:
+          description: Список непогашенных задолженностей
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Список непогашенных задолженностей
+                example: [{ full_name: "Данилов Денис Олегович", membership: "Абонемент на 1 месяц", debt: 1337 }]
+        401:
+          description: Неавторизованный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Сообщение об ошибке
+                example: { error: 'Unauthorized' }
+        500:
+          description: Ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Сообщение об ошибке
+                example: { error: 'Error connecting to database' }
+
+  /visits:
+    get:
+      summary: Получение списка посещений
+      description: |
+        Получение списка посещений за определённый период времени. Возвращает дату, имя ученика, количество посещений,
+        название группы, уплаченную сумму, скидку и тип абонемента.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Данные для запроса
+              example: { start_year: 2022, start_month: 1, end_year: 2022, end_month: 2 }
+        required: true
+      responses:
+        200:
+          description: Список посещений
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Список посещений
+                example: [
+                  { date: "Январь 2022", pupil_name: "Рыбаков Даниил Максимович", visits: 1, group_name: "Проспект Вернадского", paid: 4400, discount: 0, membership: "Абонемент на 1 месяц" },
+                  { date: "Февраль 2022", pupil_name: "Данилов Денис Олегович", visits: 6, group_name: "Проспект Вернадского", paid: 3900, discount: 500, membership: "Абонемент на 1 месяц" },
+                  { date: "Февраль 2022", pupil_name: "Рыбаков Даниил Максимович", visits: 2, group_name: "Проспект Вернадского", paid: 4400, discount: 0, membership: "Абонемент на 1 месяц" } ]
+        401:
+          description: Неавторизованный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Сообщение об ошибке
+                example: { error: 'Unauthorized' }
+        500:
+          description: Ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Сообщение об ошибке
+                example: { error: 'Error connecting to database' }
+
+  /groups:
+    get:
+      summary: Получение название нынешней группы
+      description: |
+        Получение названия группы ученика, от которого происходит авторизация.
+      responses:
+        200:
+          description: Список групп
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Список групп
+                example: [{ group_name: "Проспект Вернадского" }]
+        401:
+          description: Неавторизованный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Сообщение об ошибке
+                example: { error: 'Unauthorized' }
+        500:
+          description: Ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Сообщение об ошибке
+                example: { error: 'Error connecting to database' }
+
+  /groups/schedule:
+    get:
+      summary: Получение расписания групп
+      description: |
+        Получение расписания группы, в которой состоит данный ученик, либо которые ведёт учитель.
+        Возвращает день недели, время начала, продолжительность занятия, название зала, название группы и адрес.
+      responses:
+        200:
+          description: Расписание групп
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Расписание групп
+                example: [
+                    { weekday: "Среда", begin_time: "19:00", duration: 02:00:00, hall: "Ромашка", group_name: "Проспект Вернадского", address: "Проспект Вернадского, д. 29" },
+                    { weekday: "Суббота", begin_time: "11:00", duration: 01:00:00, hall: "3", group_name: "Новые Черемушки", address: "Ул. Профсоюзная, 31к5" } ]
+        401:
+          description: Неавторизованный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Сообщение об ошибке
+                example: { error: 'Unauthorized' }
+        500:
+          description: Ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Сообщение об ошибке
+                example: { error: 'Error connecting to database' }
+
+  /groups/{:id}:
+    get:
+      summary: Получение информации об абонементах, доступных данной группе
+      description: |
+        Возвращает список доступных абонементов, их цену и ID.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: id группы
+          example: 1
+      responses:
+        200:
+          description: Информация об абонементах
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Информация о группе
+                example: [
+                    { id: 1, name: "Абонемент на 1 месяц", price: 4400, group_id: 1 },
+                    { id: 5, name: "Абонемент на 4 занятия", price: 3000, group_id: 1 },
+                    { id: 9, name: "Разовое занятие", price: 850, group_id: 1 } ]
