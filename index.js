@@ -41,13 +41,14 @@ app.post('/api/v1/login', (req, res) => {
         database: process.env.DB_NAME,
     });
     pool.connect((err) => {
-        if (err.routine === 'auth_failed') return res.status(401).json({ error: 'Invalid username or password' });
+        if (err?.routine === 'auth_failed') return res.status(401).json({ error: 'Invalid username or password' });
         if (err) return res.status(500).json({ error: 'Error connecting to database' });
+
+        const token = generateSessionToken();
+        pools[token] = pool;
+        res.cookie('session', token, { maxAge: remember ? 1000 * 60 * 60 * 24 * 7 : null });
+        res.status(200).json({ status: 'success', message: 'Logged in' });
     });
-    const token = generateSessionToken();
-    pools[token] = pool;
-    res.setHeader('Set-Cookie', `session=${token}; HttpOnly ${(Boolean(remember) === true ? '; Max-Age=31536000' : '')}`);
-    res.status(200).json({ status: "success", token: token });
 });
 
 app.get('/api/v1/logout', (req, res) => {
