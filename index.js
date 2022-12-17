@@ -13,6 +13,7 @@ if (process.env.NODE_ENV !== 'production') {
  *  Подключить Redis вместо pools
  *  Раскидать по разным файлам
  *  Достичь 100% покрытия функций
+ *  Переделать авторизацию с cookie на JWT
  */
 
 
@@ -44,7 +45,7 @@ app.post('/api/v1/login', (req, res) => {
         const token = generateSessionToken();
         pools[token] = pool;
         res.setHeader('Set-Cookie', `session=${token}; HttpOnly ${(Boolean(remember) === true ? '; Max-Age=31536000' : '')}`);
-        res.status(200).json({ status: "success", message: "Logged in" });
+        res.status(200).json({ status: "success", token });
     });
 });
 
@@ -77,7 +78,7 @@ app.get('/api/v1/user/unpaid', checkSession, (req, res) => {
     });
 });
 
-app.get('/api/v1/user/visits', checkSession, (req, res) => {
+app.get('/api/v1/visits', checkSession, (req, res) => {
     const pool = req.pool;
     let { start_year, start_month , end_year, end_month } = req.query;
     if (!start_year || !start_month || !end_year || !end_month)
@@ -110,7 +111,7 @@ app.get('/api/v1/groups/schedule', checkSession, (req, res) => {
 
 app.get('/api/v1/groups', checkSession, (req, res) => {
     const pool = req.pool;
-    pool.query('SELECT * FROM get_group_name()', (err, result) => {
+    pool.query('SELECT * FROM get_group_name() AS group_name', (err, result) => {
         if (err) return res.status(500).json({ error: 'Error connecting to database' });
         res.status(200).json(result.rows);
     });
@@ -134,7 +135,7 @@ function generateSessionToken() {
 function checkSession(req, res, next) {
     const token = req.headers.cookie.split('=')[1];
     const pool = pools[token];
-    if (!pool || !token) return res.status(303).redirect('/api/v1/login');
+    if (!pool || !token) return res.status(401).json({ error: 'Unauthorized' });
     req.pool = pool;
     next();
 }
