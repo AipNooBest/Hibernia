@@ -1,0 +1,64 @@
+openapi: 3.0.2
+info:
+  title: Hibernia API
+  version: 1.0.0
+  description: |
+        Это API для работы с системой учёта и управления данными школы ирландских танцев Hibernia.
+        Для работы с API необходимо авторизоваться в системе и получить токен доступа.
+
+servers:
+  - url: http://hibernia/api/v1
+    description: Staging server
+
+paths:
+  /login:
+    post:
+      summary: Авторизация
+      description: |
+        Авторизация в системе. Устанавливает в куки токен доступа в виде переменной `session`
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Имя пользователя
+                password:
+                  type: string
+                  description: Пароль
+      responses:
+        200:
+          description: Успешная авторизация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    description: Статус ответа
+                    example: { status: 'success', message: 'Logged in' }
+        401:
+          description: Неверный логин или пароль
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    description: Сообщение об ошибке
+                    example: { error: 'Invalid username or password' }
+        500:
+          description: Ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    description: Сообщение об ошибке
+                    example: { error: 'Error connecting to database' }
