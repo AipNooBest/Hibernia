@@ -3,11 +3,27 @@ version: "2.3"
 services:
   postgres:
     image: postgres
-    container_name: postgres
+    container_name: hibernia_db
     restart: always
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_SULOGIN}
-      POSTGRES_PASSWORD: ${DB_SUPASSWORD}
+      POSTGRES_DB: ${DB_NAME:-hibernia}
+      POSTGRES_USER: ${DB_SULOGIN:-hibernia}
+      POSTGRES_PASSWORD: ${DB_SUPASSWORD:-hibernia}
     ports:
-      - "${DB_PORT}:5432"
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d/
+
+  hibernia:
+    image: nodejs
+    container_name: hibernia_backend
+    restart: always
+    environment:
+      DB_HOST: ${DB_HOST:-localhost}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-hibernia}
+    ports:
+      - "${API_PORT:-3000}:3000"
+    # По-хорошему исходники надо все хранить в src, ибо тут они будут вместе с database, но пока так
+    volumes:
+        - ./:/app
