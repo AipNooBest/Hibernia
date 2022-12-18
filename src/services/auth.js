@@ -16,7 +16,7 @@ module.exports = {
             db.connect(pool).then((pool) => {
                 const token = security.generateSessionToken();
                 redis.add(token, pool);
-                resolve({ code: 200, token });
+                resolve({ code: 200, message: token });
             }).catch((e) => {
                 reject(e);
             });
