@@ -1,6 +1,6 @@
 const swaggerAutogen = require('swagger-autogen')({openapi: '3.0.2'});
 
-const outputFile = './swagger_output.json';
+const outputFile = './docs/swagger_output.json';
 const endpointsFiles = ['./src/routes/v1/index.js'];
 
 const doc = {
@@ -9,7 +9,7 @@ const doc = {
         title: "Hibernia API",
         description: "API для работы с системой учёта и управления данными школы ирландских танцев Hibernia"
     },
-    host: "localhost:3000",
+    host: "localhost:" + process.env.API_PORT ? process.env.API_PORT : "3000",
     basePath: "/api/v1",
     schemes: ["http"],
     consumes: ["application/json"],

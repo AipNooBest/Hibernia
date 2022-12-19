@@ -29,4 +29,15 @@ services:
     volumes:
         - ./:/app
     working_dir: /app
-    command: bash -c "npm install && node index.js"
+    command: bash -c "npm install && npm run swagger-autogen && node index.js"
+
+  swagger:
+    image: swaggerapi/swagger-ui
+    container_name: hibernia_swagger
+    restart: always
+    environment:
+      URL: "./docs/swagger_output.json"
+    ports:
+      - "${SWAGGER_PORT:-8080}:8080"
+    volumes:
+      - ./docs:/usr/share/nginx/html/docs
