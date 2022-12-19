@@ -117,6 +117,16 @@ AS $$
     SELECT id FROM pupils WHERE status = 1 OR status = 2;
 $$ LANGUAGE SQL;
 
+-- Получение последнего месяца, в котором были посещения у ученика
+CREATE OR REPLACE FUNCTION get_last_pupil_accounting(id int)
+    RETURNS TABLE (acc_month int, acc_year int, pupil_id int, visits int, discount money, paid money, active_membership_id int)
+AS $$
+    SELECT * FROM accounting
+    WHERE pupil_id = id
+    ORDER BY acc_year DESC, acc_month DESC
+    LIMIT 1;
+$$ LANGUAGE SQL;
+
 -- Существует ли уже такой пользователь
 CREATE OR REPLACE FUNCTION user_exists(username text)
 RETURNS boolean
@@ -125,3 +135,25 @@ AS $$
            EXISTS(SELECT 1 FROM teachers WHERE teachers.username = $1) OR
            EXISTS(SELECT 1 FROM pg_user WHERE usename = $1);
 $$ LANGUAGE SQL;
+
+-- Функция для получения ученика по нику
+CREATE OR REPLACE FUNCTION get_pupil(username text)
+    RETURNS TABLE (full_name text, age int, sex text, status text, group_name text, membership text) AS
+$$
+SELECT concat_ws(' ', pupils.last_name, pupils.first_name, pupils.second_name) AS full_name,
+       pupils.age,
+       CASE
+           WHEN pupils.sex = 0::bit THEN 'Мужской'::text
+           ELSE 'Женский'::text
+           END AS sex,
+       status.status,
+       groups.name AS group_name,
+       membership_type.membership
+FROM pupils
+         JOIN status ON status.id = pupils.status
+         JOIN groups ON groups.id = pupils.group_id
+         JOIN accounting ON accounting.pupil_id = pupils.id AND
+                            (acc_year, acc_month) = (SELECT acc_year, acc_month FROM get_last_pupil_accounting(pupils.id))
+         JOIN membership_type ON membership_type.id = accounting.active_membership_id
+WHERE pupils.username = $1;
+$$ LANGUAGE sql;

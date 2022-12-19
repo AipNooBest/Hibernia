@@ -82,6 +82,14 @@ const doc = {
             membership: "Абонемент на 1 месяц",
             debt: 1337
         }],
+        UserGetByUsername: [{
+            "full_name": "Данилов Денис Олегович",
+            "age": 20,
+            "sex": "Мужской",
+            "status": "Постоянно посещает занятия",
+            "group_name": "Проспект Вернадского",
+            "membership": "Абонемент на 1 месяц"
+        }],
         UserAdd: {
             last_name: "Данилов",
             first_name: "Денис",

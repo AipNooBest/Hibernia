@@ -16,6 +16,13 @@ module.exports = {
                 .catch(e => reject(e));
         });
     },
+    getByUsername: (pool, username) => {
+        return new Promise((resolve, reject) => {
+            db.handle(pool, 'SELECT * FROM get_pupil($1)', [username])
+                .then(r => resolve(r))
+                .catch(e => reject(e));
+        });
+    },
     delete: (pool, username) => {
         return new Promise((resolve, reject) => {
             username = security.sanitizeString(username);

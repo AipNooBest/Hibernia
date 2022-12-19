@@ -25,6 +25,18 @@ module.exports = {
                 res.status(e.code).json(e);
             });
     },
+    getByUsername: (req, res) => {
+        // #swagger.tags = ['Users']
+        // #swagger.summary = Получение профиля по имени пользователя
+        // #swagger.description = Получение профиля ученика по его имени пользователя.
+        // #swagger.responses[200] = { schema: { $ref: "#/definitions/UserGetByUsername" }}
+        user.getByUsername(req.pool, req.params.username)
+            .then(r => res.status(200).json(r))
+            .catch(e => {
+                console.log(e);
+                res.status(e.code).json(e);
+            });
+    },
     delete: (req, res) => {
         // #swagger.tags = ['Users']
         // #swagger.summary = Удаление ученика
