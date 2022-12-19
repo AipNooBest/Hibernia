@@ -1,18 +1,4 @@
 /* Создание триггеров */
--- Триггер для удаления строк из таблицы accounting при удалении ученика
-CREATE OR REPLACE FUNCTION delete_accounting_row()
-RETURNS trigger AS $$
-BEGIN
-    DELETE FROM accounting WHERE pupil_id = OLD.id;
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER delete_accounting_row
-    BEFORE DELETE ON pupils
-    FOR EACH ROW
-    EXECUTE PROCEDURE delete_accounting_row();
-
 -- Триггер для удаления строк из таблицы accounting в случае, если прошло уже больше 12 месяцев
 CREATE OR REPLACE FUNCTION delete_old_accounting_row()
 RETURNS trigger AS $$

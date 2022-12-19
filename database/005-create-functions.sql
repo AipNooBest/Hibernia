@@ -84,6 +84,23 @@ FROM accounting
         BETWEEN get_date(start_year, start_month) AND get_date(end_year, end_month);
 $$ LANGUAGE SQL;
 
+-- Функция для получения списка посещений за нынешний месяц
+CREATE OR REPLACE FUNCTION get_visits()
+RETURNS TABLE (date text, pupil_name text, visits int, group_name text, paid money, discount money, membership text)
+AS $$
+SELECT concat_ws(' ', get_month_name(accounting.acc_month), accounting.acc_year)           AS date,
+       concat_ws(' ', pupils.last_name, pupils.first_name, pupils.second_name)             AS pupil_name,
+       visits,
+       (SELECT name FROM groups WHERE id = group_id)                                       AS group_name,
+       paid,
+       discount,
+       (SELECT membership FROM membership_type WHERE id = accounting.active_membership_id) AS membership
+FROM accounting
+    JOIN pupils ON accounting.pupil_id = pupils.id
+    WHERE (SELECT get_date(accounting.acc_year, accounting.acc_month))
+        BETWEEN get_date(EXTRACT(YEAR FROM now())::int, EXTRACT(MONTH FROM now())::int) AND now();
+$$ LANGUAGE SQL;
+
 -- Функция для транслитерации из кириллицы в латиницу
 CREATE OR REPLACE FUNCTION transliterate(text)
 RETURNS text AS $$
@@ -98,4 +115,13 @@ CREATE OR REPLACE FUNCTION get_all_active_pupils()
 RETURNS TABLE (id int)
 AS $$
     SELECT id FROM pupils WHERE status = 1 OR status = 2;
+$$ LANGUAGE SQL;
+
+-- Существует ли уже такой пользователь
+CREATE OR REPLACE FUNCTION user_exists(username text)
+RETURNS boolean
+AS $$
+    SELECT EXISTS(SELECT 1 FROM pupils WHERE pupils.username = $1) OR
+           EXISTS(SELECT 1 FROM teachers WHERE teachers.username = $1) OR
+           EXISTS(SELECT 1 FROM pg_user WHERE usename = $1);
 $$ LANGUAGE SQL;

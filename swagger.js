@@ -81,6 +81,18 @@ const doc = {
             membership: "Абонемент на 1 месяц",
             debt: 1337
         }],
+        UserAdd: {
+            last_name: "Данилов",
+            first_name: "Денис",
+            second_name: "Олегович",
+            age: 20,
+            sex: 0,
+            begin_date: "2022-10-27",
+            status: 1,
+            group_id: 1,
+            username: "danilov",
+            password: "epic"
+        },
         Visits: [
             { date: "Январь 2022", pupil_name: "Рыбаков Даниил Максимович", visits: 1, group_name: "Проспект Вернадского", paid: 4400, discount: 0, membership: "Абонемент на 1 месяц" },
             { date: "Февраль 2022", pupil_name: "Данилов Денис Олегович", visits: 6, group_name: "Проспект Вернадского", paid: 3900, discount: 500, membership: "Абонемент на 1 месяц" },

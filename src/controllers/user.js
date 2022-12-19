@@ -29,6 +29,8 @@ module.exports = {
         // #swagger.tags = ['Users']
         // #swagger.summary = Удаление ученика
         // #swagger.description = Удаление ученика из базы данных по его логину.
+        // #swagger.parameters['username'] = { description: 'Логин ученика' }
+        // #swagger.responses[403] = { description: 'Forbidden' }
         let username = req.params.username;
         if (!username) {
             res.status(400).json({
@@ -37,6 +39,31 @@ module.exports = {
             });
         }
         user.delete(req.pool, username)
+            .then(r => res.status(200).json(r))
+            .catch(e => {
+                console.log(e);
+                res.status(e.code).json(e);
+            });
+    },
+    new: (req, res) => {
+        // #swagger.tags = ['Users']
+        // #swagger.summary = Добавление ученика
+        // #swagger.description = Добавление ученика в базу данных.
+        // #swagger.requestBody = { schema: { $ref: "#/definitions/UserAdd" }}
+        // Для swagger:
+        // noinspection ES6ShorthandObjectProperty
+        // noinspection JSUnusedLocalSymbols
+        const { last_name, first_name, second_name, age, sex, begin_date, status, group_id, username, password } = req.body;
+
+        let args = req.body;
+        // Check length of Object
+        if (Object.keys(args).length !== 10) {
+            res.status(400).json({
+                code: 400,
+                message: 'Bad request'
+            });
+        }
+        user.new(req.pool, user)
             .then(r => res.status(200).json(r))
             .catch(e => {
                 console.log(e);

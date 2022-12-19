@@ -1,6 +1,7 @@
 /* Создание процедур */
 -- Процедура для добавления ученика в таблицу учёта accounting
 CREATE OR REPLACE PROCEDURE add_pupil_to_accounting(pupil_id int, paid money, discount money, membership_id int)
+SECURITY DEFINER
 AS $$
 BEGIN
     INSERT INTO accounting (active_membership_id, acc_month, acc_year, pupil_id, discount, paid)
@@ -49,3 +50,24 @@ END;
 $$ LANGUAGE plpgsql;
 REVOKE ALL ON PROCEDURE delete_pupil(text) FROM PUBLIC;
 GRANT EXECUTE ON PROCEDURE delete_pupil(text) TO teacher;
+
+/* Процедура для добавления ученика в БД
+ * Плюс создание пользователя БД с именем, введённым при добавлении ученика
+ * Если ник при добавлении ученика не введен, то он генерируется из ФИО ученика */
+CREATE OR REPLACE PROCEDURE add_pupil(last_name text, first_name text, second_name text, age int, sex bit, begin_date date, status smallint, group_id int, username text, password text)
+SECURITY DEFINER
+AS $$
+BEGIN
+    IF username IS NULL THEN
+        username := transliterate(last_name || SUBSTR(first_name, 1, 3) || SUBSTR(second_name, 1, 3));
+    END IF;
+    IF user_exists(username) THEN
+        RAISE EXCEPTION 'Пользователь с ником % уже существует', username;
+    END IF;
+    INSERT INTO pupils (last_name, first_name, second_name, age, sex, begin_date, status, group_id, username)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
+    EXECUTE format('CREATE USER %I WITH PASSWORD %L IN ROLE %I', username, password, 'pupil');
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE add_pupil(text, text, text, int, bit, date, smallint, int, text, text) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE add_pupil(text, text, text, int, bit, date, smallint, int, text, text) TO teacher;
