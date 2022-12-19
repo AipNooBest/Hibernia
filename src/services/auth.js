@@ -13,10 +13,11 @@ module.exports = {
                 port: process.env.DB_PORT,
                 database: process.env.DB_NAME,
             });
-            db.connect(pool).then((pool) => {
+            db.connect(pool).then(async (pool) => {
                 const token = security.generateSessionToken();
                 redis.add(token, pool);
-                resolve({ code: 200, message: token });
+                const roles = await db.handle(pool, 'SELECT rolname FROM pg_roles WHERE pg_has_role($1, oid, \'member\');', [username]);
+                resolve({ code: 200, message: token, role: roles[0].rolname });
             }).catch((e) => {
                 reject(e);
             });

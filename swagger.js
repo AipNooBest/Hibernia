@@ -9,7 +9,7 @@ const doc = {
         title: "Hibernia API",
         description: "API для работы с системой учёта и управления данными школы ирландских танцев Hibernia"
     },
-    host: "localhost:" + process.env.API_PORT ? process.env.API_PORT : "3000",
+    host: "localhost:3000",
     basePath: "/api/v1",
     schemes: ["http"],
     consumes: ["application/json"],
@@ -42,12 +42,13 @@ const doc = {
     ],
     definitions: {
         LoginExample: {
-            username: "admin",
-            password: "admin"
+            username: "danilov",
+            password: "danilov"
         },
         Login: {
             code: 200,
-            message: "xo77759j3a8xr694tnuwna"
+            message: "xo77759j3a8xr694tnuwna",
+            role: "pupil"
         },
         LoginFailure: {
             code: 401,
