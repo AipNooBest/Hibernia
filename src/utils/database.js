@@ -16,11 +16,16 @@ module.exports = {
     handle: (pool, query, params = []) => {
         return new Promise((resolve, reject) => {
             pool.query(query, params, (err, res) => {
-                if (!err) resolve(res.rows);
+                if (!err) return resolve(res.rows);
 
+                // По-хорошему надо бы проверять по коду ошибки, но так хотя бы более читаемо
+                // Мб имеет смысл сделать отдельный класс а-ля Error, который будет принимать код и отдавать сообщение
                 if (err.routine === 'aclcheck_error')
                     return reject({ code: 403, error: 'Forbidden' });
+                if (err.routine === 'exec_stmt_raise')
+                    return reject({ code: 400, error: err.message });
 
+                console.error(err);
                 return reject({ code: 500, error: 'Error connecting to database' });
             });
         });

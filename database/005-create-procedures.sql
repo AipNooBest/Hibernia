@@ -13,12 +13,14 @@ CREATE OR REPLACE PROCEDURE delete_pupil(id int)
 AS $$
     DECLARE username text;
 BEGIN
+    SELECT pupils.username INTO username FROM pupils WHERE pupils.id = $1;
+    IF username IS NULL THEN
+        RAISE EXCEPTION 'Pupil with id % does not exist', $1;
+    END IF;
     DELETE FROM accounting WHERE pupil_id = $1;
     DELETE FROM concert_dance_lists WHERE pupil_id = $1;
     DELETE FROM costume_ownership WHERE pupil_id = $1;
-    SELECT pupils.username INTO username FROM pupils WHERE pupils.id = $1;
     EXECUTE format('DROP USER %I', username);
-    DELETE FROM pupils WHERE pupils.id = $1;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -27,10 +29,13 @@ AS $$
     DECLARE user_id int;
 BEGIN
     SELECT pupils.id INTO user_id FROM pupils WHERE pupils.username = $1;
+    IF user_id IS NULL THEN
+        RAISE EXCEPTION 'Pupil with username % does not exist', $1;
+    END IF;
     DELETE FROM accounting WHERE pupil_id = user_id;
     DELETE FROM concert_dance_lists WHERE pupil_id = user_id;
     DELETE FROM costume_ownership WHERE pupil_id = user_id;
-    EXECUTE format('DROP USER %I', username);
     DELETE FROM pupils WHERE pupils.username = $1;
+    EXECUTE format('DROP USER %I', username);
 END;
 $$ LANGUAGE plpgsql;
