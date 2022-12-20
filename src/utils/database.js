@@ -25,7 +25,11 @@ module.exports = {
                 if (err.routine === 'exec_stmt_raise')
                     return reject({ code: 400, error: err.message });
 
+                // Если мы дошли до сюда, значит либо фронт не справился, либо кто-то подделывает запросы
+                // Записываем ошибку в консоль, чтобы потом можно было отловить
                 console.error(err);
+                if (err.routine === 'ExecConstraints')
+                    return reject({ code: 400, error: 'Bad Request' });
                 return reject({ code: 500, error: 'Error connecting to database' });
             });
         });
