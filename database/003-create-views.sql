@@ -53,3 +53,22 @@ FROM accounting
          JOIN membership_type ON accounting.active_membership_id = membership_type.id
          JOIN pupils ON accounting.pupil_id = pupils.id;
 GRANT SELECT ON TABLE accounting_current_membership TO teacher, pupil;
+
+CREATE VIEW view_concerts AS
+    SELECT concerts.id,
+           concerts.beginning_time,
+           concerts.address,
+           dances.name as dance_name,
+           dances.duration as dance_duration,
+           concat_ws(' ', pupils.last_name, pupils.first_name, pupils.second_name) as pupil_name,
+           CASE WHEN dances.type = 0::bit THEN 'Мягкий' ELSE 'Жёсткий' END as dance_type
+    FROM concerts
+    JOIN concert_dance_lists cdl on concerts.id = cdl.concert_id
+    JOIN dances on cdl.dance_id = dances.id
+    JOIN pupils on cdl.pupil_id = pupils.id
+    WHERE
+        CASE
+              WHEN pg_has_role(current_user, 'teacher', 'member') THEN true
+              ELSE username = current_user
+                END;
+GRANT SELECT ON TABLE view_concerts TO teacher, pupil;

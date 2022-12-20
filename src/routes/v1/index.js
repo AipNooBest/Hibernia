@@ -4,6 +4,7 @@ const auth = require('./auth');
 const base = require('./base');
 const groups = require('./groups');
 const user = require('./user');
+const concerts = require('./concerts');
 
 router.get('/status', (req, res) => {
     res.json({
@@ -18,5 +19,6 @@ router.use('/', auth);
 router.use('/', base);
 router.use('/groups', groups);
 router.use('/user', user);
+router.use('/concerts', concerts);
 
 module.exports = router;

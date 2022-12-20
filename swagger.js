@@ -26,6 +26,10 @@ const doc = {
         {
             name: "Groups",
             description: "Работа с группами"
+        },
+        {
+            name: "Concerts",
+            description: "Работа с концертами"
         }
     ],
     components: {
@@ -102,6 +106,42 @@ const doc = {
             group_id: 1,
             username: "danilov",
             password: "epic"
+        },
+        Concerts: [
+            {
+                "id": 1,
+                "beginning_time": "2021-07-14T15:00:00.000Z",
+                "address": "Сибирский пр-д, 2, стр. 5",
+                "dance_name": "Beginner's Reel Hard",
+                "dance_duration": "00:01:06",
+                "pupil_name": "Данилов Денис Олегович",
+                "dance_type": "Жёсткий"
+            },
+            {
+                "id": 2,
+                "beginning_time": "2022-07-29T16:00:00.000Z",
+                "address": "Тверская улица, дом 13",
+                "dance_name": "Mix Reel Soft",
+                "dance_duration": "00:01:17",
+                "pupil_name": "Данилов Денис Олегович",
+                "dance_type": "Мягкий"
+            }
+        ],
+        ConcertAdd: {
+            date: "2022-10-27",
+            place: "Тверская улица, дом 13"
+        },
+        ConcertDelete: {
+            id: "1"
+        },
+        ConcertAddPupil: {
+            concert_id: 1,
+            pupil_id: 1,
+            dance_id: 1
+        },
+        ConcertDeletePupil: {
+            concert_id: 1,
+            pupil_id: 1
         },
         Visits: [
             { date: "Январь 2022", pupil_name: "Рыбаков Даниил Максимович", visits: 1, group_name: "Проспект Вернадского", paid: 4400, discount: 0, membership: "Абонемент на 1 месяц" },

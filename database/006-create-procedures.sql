@@ -71,3 +71,48 @@ END;
 $$ LANGUAGE plpgsql;
 REVOKE ALL ON PROCEDURE add_pupil(text, text, text, int, bit, date, smallint, int, text, text) FROM PUBLIC;
 GRANT EXECUTE ON PROCEDURE add_pupil(text, text, text, int, bit, date, smallint, int, text, text) TO teacher;
+
+-- Добавление нового концерта
+CREATE OR REPLACE PROCEDURE add_concert(date date, place text)
+SECURITY DEFINER
+AS $$
+BEGIN
+    INSERT INTO concerts (beginning_time, address) VALUES ($1, $2);
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE add_concert(date, text) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE add_concert(date, text) TO teacher;
+
+-- Добавление ученика в качестве участника концерта
+CREATE OR REPLACE PROCEDURE add_pupil_to_concert(pupil_id int, concert_id int, dance_id int)
+SECURITY DEFINER
+AS $$
+BEGIN
+    INSERT INTO concert_dance_lists (pupil_id, concert_id, dance_id) VALUES ($1, $2, $3);
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE add_pupil_to_concert(int, int, int) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE add_pupil_to_concert(int, int, int) TO teacher;
+
+-- Удаление ученика из списка участников концерта
+CREATE OR REPLACE PROCEDURE delete_pupil_from_concert(concert_id int, pupil_id int)
+SECURITY DEFINER
+AS $$
+BEGIN
+    DELETE FROM concert_dance_lists AS cdl WHERE cdl.concert_id = $1 AND cdl.pupil_id = $2;
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE delete_pupil_from_concert(int, int) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE delete_pupil_from_concert(int, int) TO teacher;
+
+-- Удаление концерта
+CREATE OR REPLACE PROCEDURE delete_concert(concert_id int)
+SECURITY DEFINER
+AS $$
+BEGIN
+    DELETE FROM concert_dance_lists AS cdl WHERE cdl.concert_id = $1;
+    DELETE FROM concerts WHERE id = $1;
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE delete_concert(int) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE delete_concert(int) TO teacher;
