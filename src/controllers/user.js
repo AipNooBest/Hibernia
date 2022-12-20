@@ -42,7 +42,7 @@ module.exports = {
         // #swagger.summary = Удаление ученика
         // #swagger.description = Удаление ученика из базы данных по его логину.
         // #swagger.parameters['username'] = { description: 'Логин ученика' }
-        // #swagger.responses[403] = { description: 'Forbidden' }
+        // #swagger.responses[403] = { schema: { $ref: "#/definitions/Forbidden" }}
         let username = req.params.username;
         if (!username) {
             res.status(400).json({
@@ -62,6 +62,7 @@ module.exports = {
         // #swagger.summary = Добавление ученика
         // #swagger.description = Добавление ученика в базу данных.
         // #swagger.requestBody = { schema: { $ref: "#/definitions/UserAdd" }}
+        // #swagger.responses[403] = { schema: { $ref: "#/definitions/Forbidden" }}
         // Для swagger:
         // noinspection ES6ShorthandObjectProperty
         // noinspection JSUnusedLocalSymbols
