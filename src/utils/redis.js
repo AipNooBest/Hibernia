@@ -1,16 +1,26 @@
-let redis = {}
-// Игорь Денисович, если вы это читайте, поставьте +1 балл за пасхалку :^)
+const { createClient } = require("redis");
+let client;
 
 module.exports = {
-    // Псевдо Redis. На самом деле пока здесь обычный объект
-    // Но в будущем я заменю его на реальный Redis
-    add: (key, value) => {
-        redis[key] = value;
+    add: async (key, value) => {
+        if (typeof value === "object") value = JSON.stringify(value);
+        await client.set(key, value);
     },
-    get: (key) => {
-        return redis[key];
+    get: async (key) => {
+        const value = await client.get(key);
+        if (value) return JSON.parse(value);
+        return null;
     },
-    remove: (key) => {
-        delete redis[key];
+    remove: async (key) => {
+        await client.del(key);
+    },
+    connect: (url) => {
+        if (client) return;
+        client = createClient({
+            url: url
+        });
+        client.connect()
+            .then(() => console.log("Redis connected"))
+            .catch((err) => console.log(err));
     }
 }

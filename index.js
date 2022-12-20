@@ -1,12 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const routes = require('./src/routes/v1');
+const redis = require('./src/utils/redis');
 const app = express();
 const port = 3000;
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
+redis.connect(process.env.REDIS_URL || 'redis://localhost:6379');
 
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
@@ -17,4 +19,6 @@ app.use(function (req, res, next) {
     next();
 });
 app.use('/api/v1', routes);
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}!`)
+});

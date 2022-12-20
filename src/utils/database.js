@@ -1,8 +1,24 @@
 // Иногда мне кажется, что я всё усложняю...
+const pg = require("pg");
+let pools = [];
 
 module.exports = {
-    connect: (pool) => {
+    connect: (options) => {
         return new Promise((resolve, reject) => {
+            const lifetime = process.env.SESSION_LIFETIME_SEC ?
+                process.env.SESSION_LIFETIME_SEC * 1000 : new Date(options.givenDate).getTime() + 1000 * 60 * 60 * 24;
+            pools.some((pool) => {
+                if (pool.options.user === options.user &&
+                    pool.options.password === options.password &&
+                    pool.options.host === options.host &&
+                    pool.options.port === options.port &&
+                    pool.options.database === options.database &&
+                    new Date(pool.options.givenDate).getTime() < new Date(Date.now() + lifetime).getDate()) {
+                    resolve(pool);
+                    return true;
+                }
+            })
+            const pool = new pg.Pool(options);
             pool.connect((err) => {
                 if (!err) return resolve(pool);
 
