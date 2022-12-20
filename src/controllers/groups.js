@@ -30,7 +30,7 @@ module.exports = {
         // #swagger.description = Получение расписания группы, в которой состоит данный ученик, либо которые ведёт учитель.
         // Возвращает день недели, время начала, продолжительность занятия, название зала, название группы и адрес.
         // #swagger.responses[200] = { schema: { $ref: "#/definitions/Schedule" }}
-        groups.getSchedule(req.pool, req.params.id)
+        groups.getSchedule(req.pool)
             .then(r => res.status(200).json(r))
             .catch(e => {
                 console.log(e);
