@@ -28,7 +28,11 @@ module.exports = {
                 // Если мы дошли до сюда, значит либо фронт не справился, либо кто-то подделывает запросы
                 // Записываем ошибку в консоль, чтобы потом можно было отловить
                 console.error(err);
-                if (err.routine === 'ExecConstraints')
+                if (process.env.NODE_ENV === 'development')
+                    return reject ({ code: 500, error: err.message, routine: err.routine });
+                if (err.routine === '_bt_check_unique')
+                    return reject({ code: 409, error: 'Duplicate key' });
+                if (err.routine === 'ExecConstraints' || err.routine === 'ParseFuncOrColumn' || err.routine === 'pg_strtoint32')
                     return reject({ code: 400, error: 'Bad Request' });
                 return reject({ code: 500, error: 'Error connecting to database' });
             });

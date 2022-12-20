@@ -63,6 +63,10 @@ const doc = {
             code: 200,
             message: "Logged out"
         },
+        BadRequest: {
+            code: 400,
+            error: "Bad request"
+        },
         Unauthorized: {
             code: 401,
             message: "Unauthorized"
@@ -70,6 +74,10 @@ const doc = {
         Forbidden: {
             code: 403,
             message: "Forbidden"
+        },
+        Conflict: {
+            code: 409,
+            message: "Duplicate key"
         },
         InternalServerError: {
             code: 500,
