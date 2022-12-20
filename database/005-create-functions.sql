@@ -81,7 +81,8 @@ SELECT concat_ws(' ', get_month_name(accounting.acc_month), accounting.acc_year)
 FROM accounting
     JOIN pupils ON accounting.pupil_id = pupils.id
     WHERE (SELECT get_date(accounting.acc_year, accounting.acc_month))
-        BETWEEN get_date(start_year, start_month) AND get_date(end_year, end_month);
+        BETWEEN get_date(start_year, start_month) AND get_date(end_year, end_month)
+    ORDER BY accounting.acc_year, accounting.acc_month DESC;
 $$ LANGUAGE SQL;
 
 -- Функция для получения списка посещений за нынешний месяц
