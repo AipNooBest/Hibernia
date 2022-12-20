@@ -48,7 +48,7 @@ module.exports = {
          */
         // #swagger.responses[403] = { schema: { $ref: "#/definitions/Forbidden" }}
         const { concert_id, pupil_id, dance_id } = req.body;
-        concerts.add_pupil(req.pool, concert_id, pupil_id, dance_id)
+        concerts.addPupil(req.pool, concert_id, pupil_id, dance_id)
             .then(r => res.status(200).json(r))
             .catch(e => res.status(e.code).json(e));
     },
@@ -62,7 +62,7 @@ module.exports = {
          */
         // #swagger.responses[403] = { schema: { $ref: "#/definitions/Forbidden" }}
         const { concert_id, pupil_id } = req.body;
-        concerts.delete_pupil(req.pool, concert_id, pupil_id)
+        concerts.deletePupil(req.pool, concert_id, pupil_id)
             .then(r => res.status(200).json(r))
             .catch(e => res.status(e.code).json(e));
     }
