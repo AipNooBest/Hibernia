@@ -116,3 +116,71 @@ END;
 $$ LANGUAGE plpgsql;
 REVOKE ALL ON PROCEDURE delete_concert(int) FROM PUBLIC;
 GRANT EXECUTE ON PROCEDURE delete_concert(int) TO teacher;
+
+-- Добавление нового танца
+CREATE OR REPLACE PROCEDURE add_dance(name text, type bit, duration time, difficulty smallint, music_name text, is_for_kids bool)
+SECURITY DEFINER
+AS $$
+BEGIN
+    INSERT INTO dances (name, type, duration, difficulty, music_name, is_for_kids) VALUES ($1, $2, $3, $4, $5, $6);
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE add_dance(text, bit, time, smallint, text, bool) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE add_dance(text, bit, time, smallint, text, bool) TO teacher;
+
+-- Удаление танца
+CREATE OR REPLACE PROCEDURE delete_dance(dance_id int)
+SECURITY DEFINER
+AS $$
+BEGIN
+    DELETE FROM concert_dance_lists AS cdl WHERE cdl.dance_id = $1;
+    DELETE FROM dances WHERE id = $1;
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE delete_dance(int) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE delete_dance(int) TO teacher;
+
+-- Добавление нового костюма
+CREATE OR REPLACE PROCEDURE add_costume(type text, color text, size smallint, cost money)
+SECURITY DEFINER
+AS $$
+BEGIN
+    INSERT INTO costumes (type, color, clothes_size, cost) VALUES ($1, $2, $3, $4);
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE add_costume(text, text, smallint, money) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE add_costume(text, text, smallint, money) TO teacher;
+
+-- Удаление костюма
+CREATE OR REPLACE PROCEDURE delete_costume(costume_id int)
+SECURITY DEFINER
+AS $$
+BEGIN
+    DELETE FROM costume_ownership AS co WHERE co.costume_id = $1;
+    DELETE FROM costumes WHERE id = $1;
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE delete_costume(int) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE delete_costume(int) TO teacher;
+
+-- Добавление нового ученика в качестве владельца костюма
+CREATE OR REPLACE PROCEDURE add_pupil_to_costume(pupil_id int, costume_id int, is_owned bool)
+SECURITY DEFINER
+AS $$
+BEGIN
+    INSERT INTO costume_ownership (pupil_id, costume_id, is_owned) VALUES ($1, $2, $3);
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE add_pupil_to_costume(int, int, bool) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE add_pupil_to_costume(int, int, bool) TO teacher;
+
+-- Удаление ученика из списка владельцев костюма
+CREATE OR REPLACE PROCEDURE delete_pupil_from_costume(pupil_id int, costume_id int)
+SECURITY DEFINER
+AS $$
+BEGIN
+    DELETE FROM costume_ownership AS co WHERE co.pupil_id = $1 AND co.costume_id = $2;
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE delete_pupil_from_costume(int, int) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE delete_pupil_from_costume(int, int) TO teacher;

@@ -72,3 +72,20 @@ CREATE VIEW view_concerts AS
               ELSE username = current_user
                 END;
 GRANT SELECT ON TABLE view_concerts TO teacher, pupil;
+
+CREATE VIEW view_costume_ownership AS
+    SELECT concat_ws(' ', last_name, first_name, second_name) as pupil_name,
+           costumes.type as costume_type,
+           costumes.color as costume_color,
+           costumes.clothes_size as costume_size,
+           costumes.cost as costume_cost,
+            costume_ownership.is_owned as costume_own
+    FROM costume_ownership
+    JOIN costumes on costume_ownership.costume_id = costumes.id
+    JOIN pupils on costume_ownership.pupil_id = pupils.id
+    WHERE
+        CASE
+              WHEN pg_has_role(current_user, 'teacher', 'member') THEN true
+              ELSE username = current_user
+                END;
+GRANT SELECT ON TABLE view_costume_ownership TO teacher, pupil;

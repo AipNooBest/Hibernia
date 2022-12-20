@@ -30,6 +30,10 @@ const doc = {
         {
             name: "Concerts",
             description: "Работа с концертами"
+        },
+        {
+            name: "Costumes",
+            description: "Работа с костюмами"
         }
     ],
     components: {
@@ -151,6 +155,47 @@ const doc = {
             concert_id: 1,
             pupil_id: 1
         },
+        Costumes: [
+            {
+                "id": 1,
+                "type": "Платье",
+                "color": "Оранжевый",
+                "clothes_size": 0,
+                "cost": "$5,000.00"
+            },
+            {
+                "id": 2,
+                "type": "Платье",
+                "color": "Черно-желтый",
+                "clothes_size": 0,
+                "cost": "$5,000.00"
+            }
+        ],
+        CostumeAdd: {
+            type: "Платье",
+            color: "Красный",
+            size: "42",
+            cost: 1800
+        },
+        CostumeAddPupil: {
+            pupil_id: 1,
+            costume_id: 1,
+            is_owned: true
+        },
+        CostumeDeletePupil: {
+            pupil_id: 1,
+            costume_id: 1
+        },
+        CostumeOwnership: [
+            {
+                "pupil_name": "Рыбаков Даниил Максимович",
+                "costume_type": "Рубашка",
+                "costume_color": "Синий",
+                "costume_size": 0,
+                "costume_cost": "$2,500.00",
+                "costume_own": true
+            }
+        ],
         Visits: [
             { date: "Январь 2022", pupil_name: "Рыбаков Даниил Максимович", visits: 1, group_name: "Проспект Вернадского", paid: 4400, discount: 0, membership: "Абонемент на 1 месяц" },
             { date: "Февраль 2022", pupil_name: "Данилов Денис Олегович", visits: 6, group_name: "Проспект Вернадского", paid: 3900, discount: 500, membership: "Абонемент на 1 месяц" },

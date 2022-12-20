@@ -5,6 +5,7 @@ const base = require('./base');
 const groups = require('./groups');
 const user = require('./user');
 const concerts = require('./concerts');
+const costumes = require('./costumes');
 
 router.get('/status', (req, res) => {
     res.json({
@@ -20,5 +21,6 @@ router.use('/', base);
 router.use('/groups', groups);
 router.use('/user', user);
 router.use('/concerts', concerts);
+router.use('/costumes', costumes);
 
 module.exports = router;
