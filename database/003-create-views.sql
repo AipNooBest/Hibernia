@@ -26,15 +26,16 @@ CREATE VIEW view_unpaid_visits AS
               END;
 GRANT SELECT ON TABLE view_unpaid_visits TO teacher, pupil;
 
-CREATE VIEW groups_schedule(weekday, begin_time, duration, hall_name, name, address) as
-SELECT schedule.weekday,
+CREATE VIEW groups_schedule(group_id, weekday, begin_time, duration, hall_name, name, address) as
+SELECT groups.id,
+       schedule.weekday,
        schedule.begin_time,
        schedule.duration,
        schedule.hall_name,
        groups.name,
        groups.address
 FROM schedule
-         JOIN groups ON schedule.group_id = groups.id;
+         JOIN groups ON schedule.group_id = groups.id ORDER BY group_id;
 GRANT SELECT ON TABLE groups_schedule TO teacher, pupil;
 
 CREATE VIEW accounting_current_membership
