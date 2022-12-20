@@ -33,8 +33,7 @@ module.exports = {
             schema: { $ref: "#/definitions/ConcertDelete" }}
          */
         // #swagger.responses[403] = { schema: { $ref: "#/definitions/Forbidden" }}
-        const { id } = req.body;
-        concerts.delete(req.pool, id)
+        concerts.delete(req.pool, req.params.id)
             .then(r => res.status(200).json(r))
             .catch(e => res.status(e.code).json(e));
     },
