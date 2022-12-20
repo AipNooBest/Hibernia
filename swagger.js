@@ -28,17 +28,18 @@ const doc = {
             description: "Работа с группами"
         }
     ],
-    securityDefinitions: {
-        cookieAuth: {
-            type: "apiKey",
-            in: "cookie",
-            name: "session"
+    components: {
+        securitySchemes: {
+            bearerAuth: {
+                type: 'http',
+                scheme: 'bearer',
+            }
         }
     },
     security: [
         {
-            cookieAuth: []
-        },
+            bearerAuth: []
+        }
     ],
     definitions: {
         LoginExample: {
@@ -115,7 +116,6 @@ const doc = {
             { weekday: "Среда", begin_time: "19:00", duration: "02:00:00", hall: "Ромашка", group_name: "Проспект Вернадского", address: "Проспект Вернадского, д. 29" },
             { weekday: "Суббота", begin_time: "11:00", duration: "01:00:00", hall: "3", group_name: "Новые Черемушки", address: "Ул. Профсоюзная, 31к5" }
         ]
-
     }
 }
 

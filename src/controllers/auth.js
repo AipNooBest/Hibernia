@@ -14,12 +14,7 @@ module.exports = {
         // #swagger.responses[401] = { schema: { $ref: "#/definitions/LoginFailure" }}
         const { username, password } = req.body;
         auth.login(username, password)
-            .then(r => {
-                // Мне похер, что это небезопасно, в реальных условиях тут сверху будет Secure и HttpOnly + CSRF
-                // Но камон, времени на это вообще сейчас нет
-                res.setHeader('Set-Cookie', `session=${r.message}; SameSite=None`);
-                res.status(200).json(r);
-            })
+            .then(r => res.status(200).json(r))
             .catch(e => res.status(e.code).json(e));
     },
     logout: (req, res) => {

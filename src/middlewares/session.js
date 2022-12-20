@@ -13,9 +13,8 @@ module.exports = {
             });
             return next();
         }
-        // Если что, не факт, что у нас в куки лежит *только* токен, это надо будет проверить
-        // Плюс я пока думаю, переходить на JWT или нуегонахер
-        const token = req.headers.cookie.split('=')[1];
+        // В жопу эти ваши куки, лучше через Authorization header
+        const token = req.headers.authorization?.split(' ')[1];
         const pool = redis.get(token);
         if (!pool || !token) return res.status(401).json({ code: 401, error: 'Unauthorized' });
         req.pool = pool;
