@@ -23,6 +23,7 @@ services:
       DB_PORT: 5432 # Для обращения к контейнеру postgres не юзаем переменную окружения
       DB_NAME: ${DB_NAME:-hibernia}
       NODE_ENV: ${NODE_ENV:-development}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
     ports:
       - "${API_PORT:-3000}:3000"
     # По-хорошему исходники надо все хранить в src, ибо тут они будут вместе с database, но пока так
