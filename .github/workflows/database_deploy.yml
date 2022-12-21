@@ -18,4 +18,4 @@ jobs:
         run: docker-compose up -d postgres
       - name: Проверка на наличие ошибок
       # Немножко костыль со sleep, знаю, но пока так. Можно использовать wait-for-it.sh
-        run: sleep 10 && docker-compose logs | grep ERROR && exit 1
+        run: sleep 10 && docker-compose logs | grep ERROR && exit 1 || exit 0
