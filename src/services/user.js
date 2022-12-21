@@ -4,8 +4,8 @@ const security = require('../utils/security')
 module.exports = {
     getProfile: (pool) => {
         return new Promise(async (resolve, reject) => {
-            const isTeacher = await db.handle(pool, 'SELECT pg_has_role(current_user, \'teacher\', \'member\')')
-            let query = isTeacher[0] ? 'SELECT * FROM get_teacher(current_user)' : 'SELECT * FROM get_pupil(current_user)'
+            const isTeacher = (await db.handle(pool, 'SELECT pg_has_role(current_user, \'teacher\', \'member\')'))[0].pg_has_role;
+            let query = isTeacher ? 'SELECT * FROM get_teacher(current_user)' : 'SELECT * FROM get_pupil(current_user)'
             db.handle(pool, query)
                 .then(r => resolve(r))
                 .catch(e => reject(e));

@@ -9,7 +9,7 @@ CREATE VIEW view_pupils AS
     WHERE CASE
               WHEN pg_has_role(current_user, 'teacher', 'member') THEN true
               ELSE username = current_user
-              END;
+              END ORDER BY group_name, full_name;
 GRANT SELECT ON TABLE view_pupils TO teacher, pupil;
 
 CREATE VIEW view_unpaid_visits AS

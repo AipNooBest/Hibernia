@@ -15,7 +15,7 @@ module.exports = {
         }
         // В жопу эти ваши куки, лучше через Authorization header
         const token = req.headers.authorization?.split(' ')[1];
-        if (!token) return res.status(401).json({ error: 'Unauthorized' });
+        if (!token) return res.status(401).json({ code: 401, error: 'Unauthorized' });
         redis.get(token).then(async (options) => {
             if (!options) return res.status(401).json({ code: 401, error: 'Unauthorized' });
             const lifetime = process.env.SESSION_LIFETIME_SEC ?
