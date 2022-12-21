@@ -6,7 +6,7 @@ DECLARE
     accounting_date date;
 BEGIN
     accounting_date := get_date(NEW.acc_year, NEW.acc_month);
-    IF current_date - accounting_date > '12 months'::interval THEN
+    IF AGE(current_date, accounting_date) > '12 months'::interval THEN
         DELETE FROM accounting WHERE acc_year = NEW.acc_year AND acc_month = NEW.acc_month;
     END IF;
     RETURN NEW;
@@ -17,11 +17,6 @@ CREATE TRIGGER delete_old_accounting_row
     BEFORE INSERT OR UPDATE ON accounting
     FOR EACH ROW
     EXECUTE PROCEDURE delete_old_accounting_row();
-
-CREATE TRIGGER add_pupil_to_database
-    BEFORE INSERT ON pupils
-    FOR EACH ROW
-    EXECUTE PROCEDURE add_pupil_to_database();
 
 -- Триггер для ограничения по возрасту для танцев
 CREATE OR REPLACE FUNCTION limit_the_age()

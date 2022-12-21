@@ -12,15 +12,15 @@ SELECT set_config('test.failed', '0', true);
 
 -- Получение последнего ID, чтобы не занимать уже существующие и ибежать конфликтов
 -- Переменные сохраняются только в рамках данной транзакции, за это отвечает true в конце
-SELECT set_config('test.pupils.id', ((SELECT max(id) FROM pupils) + 1)::text, true);
-SELECT set_config('test.concerts.id', ((SELECT max(id) FROM concerts) + 1)::text, true);
-SELECT set_config('test.costumes.id', ((SELECT max(id) FROM costumes) + 1)::text, true);
-SELECT set_config('test.dances.id', ((SELECT max(id) FROM dances) + 1)::text, true);
-SELECT set_config('test.groups.id', ((SELECT max(id) FROM groups) + 1)::text, true);
-SELECT set_config('test.teachers.id', ((SELECT max(id) FROM teachers) + 1)::text, true);
-SELECT set_config('test.schedule.id', ((SELECT max(id) FROM schedule) + 1)::text, true);
-SELECT set_config('test.membership_type.id', ((SELECT max(id) FROM membership_type) + 1)::text, true);
-SELECT set_config('test.status.id', ((SELECT max(id) FROM status) + 1)::text, true);
+SELECT set_config('test.pupils.id', (COALESCE((SELECT max(id) FROM pupils), 1))::text, true);
+SELECT set_config('test.concerts.id', (COALESCE((SELECT max(id) FROM concerts), 1))::text, true);
+SELECT set_config('test.costumes.id', (COALESCE((SELECT max(id) FROM costumes), 1))::text, true);
+SELECT set_config('test.dances.id', (COALESCE((SELECT max(id) FROM dances), 1))::text, true);
+SELECT set_config('test.groups.id', (COALESCE((SELECT max(id) FROM groups), 1))::text, true);
+SELECT set_config('test.teachers.id', (COALESCE((SELECT max(id) FROM teachers), 1))::text, true);
+SELECT set_config('test.schedule.id', (COALESCE((SELECT max(id) FROM schedule), 1))::text, true);
+SELECT set_config('test.membership_type.id', (COALESCE((SELECT max(id) FROM membership_type), 1))::text, true);
+SELECT set_config('test.status.id', (COALESCE((SELECT max(id) FROM status), 1))::text, true);
 
 -- Добавление тестовых данных
 -- (да, это выглядит страшно и некрасиво, согласен)
@@ -50,6 +50,7 @@ INSERT INTO public.membership_type (id, membership, price, group_id)
 VALUES (current_setting('test.membership_type.id')::int, 'TestMembership', '$2000.00', current_setting('test.groups.id')::int);
 INSERT INTO public.accounting (active_membership_id, acc_month, acc_year, pupil_id, visits, discount, paid)
 VALUES (current_setting('test.membership_type.id')::int, 1, 2000, current_setting('test.pupils.id')::int, 1, '$0.00', '$4,400.00');
+CREATE USER test_pupil WITH PASSWORD 'pupil' IN ROLE pupil;
 
 -- Делаем сейвпоинт для того, чтобы в случае ошибки можно было откатиться
 -- В основном нужно во время отладки, но лишним точно не будет
@@ -57,9 +58,9 @@ SAVEPOINT after_insert;
 DO language plpgsql $$
 BEGIN
     RAISE NOTICE 'Test data was successfully added';
-    RAISE NOTICE '|--------------------------------|';
+    RAISE NOTICE '+--------------------------------+';
     RAISE NOTICE '|    FUNCTION TESTING STARTED    |';
-    RAISE NOTICE '|--------------------------------|';
+    RAISE NOTICE '+--------------------------------+';
 END
 $$;
 

@@ -8,8 +8,8 @@ BEGIN
     VALUES ($4, date_part('month', now()), date_part('year', now()), $1, $3, $2);
 END;
 $$ LANGUAGE plpgsql;
-REVOKE ALL ON FUNCTION add_pupil_to_accounting(int, money, money, int) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION add_pupil_to_accounting(int, money, money, int) TO teacher;
+REVOKE ALL ON PROCEDURE add_pupil_to_accounting(int, money, money, int) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE add_pupil_to_accounting(int, money, money, int) TO teacher;
 
 -- Процедура для удаления ученика из всех таблиц
 CREATE OR REPLACE PROCEDURE delete_pupil(id int)
