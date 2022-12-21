@@ -445,6 +445,10 @@ COMMENT ON COLUMN teachers.first_name IS 'Имя';
 COMMENT ON COLUMN teachers.second_name IS 'Отчество';
 COMMENT ON COLUMN teachers.last_name IS 'Фамилия';
 COMMENT ON COLUMN teachers.username IS 'Имя пользователя';
+COMMENT ON COLUMN teachers.age IS 'Возраст';
+COMMENT ON COLUMN teachers.sex IS 'Пол : У кого был или не был
+0 - мужЫг
+1 - девушко';
 COMMENT ON COLUMN teachers.experience IS 'Стаж';
 
 
