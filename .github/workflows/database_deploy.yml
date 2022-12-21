@@ -2,12 +2,16 @@
 name: Проверка деплоя БД
 
 on:
-  push:
+  pull_request:
     paths:
-      - 'database/*'
+      - 'database/**'
     branches:
       - main
-      - dev
+    types:
+      - opened
+      - edited
+  # Ручной запуск
+  workflow_dispatch:
 
 jobs:
   deploy:
