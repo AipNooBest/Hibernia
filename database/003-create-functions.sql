@@ -158,3 +158,22 @@ FROM pupils
          JOIN membership_type ON membership_type.id = accounting.active_membership_id
 WHERE pupils.username = $1;
 $$ LANGUAGE sql;
+
+-- Функция для получения учителя по нику
+CREATE OR REPLACE FUNCTION get_teacher(username text)
+    RETURNS TABLE (full_name text, age int, sex text, experience numeric, groups text) AS
+$$
+SELECT concat_ws(' ', teachers.last_name, teachers.first_name, teachers.second_name) AS full_name,
+       teachers.age,
+       CASE
+           WHEN teachers.sex = 0::bit THEN 'Мужской'::text
+           ELSE 'Женский'::text
+           END AS sex,
+       teachers.experience,
+       string_agg(groups.name, ', ') AS groups
+FROM teachers
+    JOIN group_management ON group_management.teacher_id = teachers.id
+    JOIN groups ON groups.id = group_management.group_id
+WHERE teachers.username = $1
+GROUP BY teachers.id;
+$$ LANGUAGE sql;

@@ -30,8 +30,8 @@ INSERT INTO public.dances (id, name, type, duration, difficulty, music_name, is_
 VALUES (current_setting('test.dances.id')::int, 'TestDance', 1::bit, '00:00:15', 1, 'TestMusic', false);
 INSERT INTO public.costumes (id, type, color, clothes_size, cost)
 VALUES (current_setting('test.costumes.id')::int, 'TestType', 'TestColor', 23, '$2000.00');
-INSERT INTO public.teachers (id, first_name, second_name, last_name, experience, username)
-VALUES (current_setting('test.teachers.id')::int, 'TestName', 'TestFather', 'TestSurname', 1, 'test_teacher');
+INSERT INTO public.teachers (id, first_name, second_name, last_name, username, experience, age, sex)
+VALUES (current_setting('test.teachers.id')::int, 'TestName', 'TestFather', 'TestSurname', 'test_teacher', 1, 30, 1::bit);
 INSERT INTO public.groups (id, name, address)
 VALUES (current_setting('test.groups.id')::int, 'TestGroup', 'TestAddress');
 INSERT INTO public.status (id, status)

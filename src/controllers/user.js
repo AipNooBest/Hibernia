@@ -82,5 +82,17 @@ module.exports = {
                 console.log(e);
                 res.status(e.code).json(e);
             });
+    },
+    list: (req, res) => {
+        // #swagger.tags = ['Users']
+        // #swagger.summary = Получение списка учеников
+        // #swagger.description = Получение списка учеников из базы данных.
+        // #swagger.responses[200] = { schema: { $ref: "#/definitions/UserList" }}
+        user.list(req.pool)
+            .then(r => res.status(200).json(r))
+            .catch(e => {
+                console.log(e);
+                res.status(e.code).json(e);
+            });
     }
 }
