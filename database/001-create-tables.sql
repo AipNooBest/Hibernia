@@ -239,6 +239,12 @@ CREATE TABLE teachers
 	last_name varchar(30) NOT NULL,
 	-- Имя пользователя
 	username varchar(50) UNIQUE,
+    -- Возраст
+    age int NOT NULL,
+    -- Пол : У кого был или не был
+    -- 0 - мужЫг
+    -- 1 - девушко
+    sex bit NOT NULL,
 	-- Стаж
 	experience decimal(3,1) NOT NULL,
 	PRIMARY KEY (id)

@@ -3,8 +3,10 @@ const security = require('../utils/security')
 
 module.exports = {
     getProfile: (pool) => {
-        return new Promise((resolve, reject) => {
-            db.handle(pool, 'SELECT * FROM view_pupils')
+        return new Promise(async (resolve, reject) => {
+            const isTeacher = await db.handle(pool, 'SELECT pg_has_role(current_user, \'teacher\', \'member\')')
+            let query = isTeacher[0] ? 'SELECT * FROM get_teacher(current_user)' : 'SELECT * FROM get_pupil(current_user)'
+            db.handle(pool, query)
                 .then(r => resolve(r))
                 .catch(e => reject(e));
         });
@@ -37,6 +39,13 @@ module.exports = {
             args = convertToNewUserArray(args);
             args = security.sanitizeArray(args);
             db.handle(pool, 'CALL add_pupil($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)', args)
+                .then(r => resolve(r))
+                .catch(e => reject(e));
+        });
+    },
+    list: (pool) => {
+        return new Promise((resolve, reject) => {
+            db.handle(pool, 'SELECT * FROM view_pupils')
                 .then(r => resolve(r))
                 .catch(e => reject(e));
         });
