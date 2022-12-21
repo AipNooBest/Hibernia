@@ -1,0 +1,3 @@
+[submodule "HiberniaCRM"]
+	path = HiberniaCRM
+	url = https://github.com/CheeseKeik/HiberniaCRM
