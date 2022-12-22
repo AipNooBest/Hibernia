@@ -14,14 +14,7 @@ module.exports = {
         return /^\d+$/.test(value) && parseInt(value) > 0;
     },
     sanitizeString(string) {
-        return string.replace(/[^a-zA-Z0-9а-яА-ЯёЁ ]/g, '');
-    },
-    sanitizeArray(array) {
-        return array.map(item => {
-            if (typeof item === 'string')
-                return this.sanitizeString(item);
-            return item;
-        });
+        return string.replace(/[^a-zA-Z0-9а-яА-ЯёЁ\- ]/g, '');
     },
     sanitizeObject(object) {
         for (let key in object) {

@@ -5,15 +5,8 @@ let pools = [];
 module.exports = {
     connect: (options) => {
         return new Promise((resolve, reject) => {
-            const lifetime = process.env.SESSION_LIFETIME_SEC ?
-                process.env.SESSION_LIFETIME_SEC * 1000 : new Date(options.givenDate).getTime() + 1000 * 60 * 60 * 24;
             pools.some((pool) => {
-                if (pool.options.user === options.user &&
-                    pool.options.password === options.password &&
-                    pool.options.host === options.host &&
-                    pool.options.port === options.port &&
-                    pool.options.database === options.database &&
-                    new Date(pool.options.givenDate).getTime() < new Date(Date.now() + lifetime).getDate()) {
+                if (poolExists(pool, options)) {
                     resolve(pool);
                     return true;
                 }
@@ -40,18 +33,36 @@ module.exports = {
                     return reject({ code: 403, error: 'Forbidden' });
                 if (err.routine === 'exec_stmt_raise')
                     return reject({ code: 400, error: err.message });
+                if (err.routine === '_bt_check_unique')
+                    return reject({ code: 409, error: 'Duplicate key' });
 
                 // Если мы дошли до сюда, значит либо фронт не справился, либо кто-то подделывает запросы
                 // Записываем ошибку в консоль, чтобы потом можно было отловить
                 console.error(err);
                 if (process.env.NODE_ENV === 'development')
                     return reject ({ code: 500, error: err.message, routine: err.routine });
-                if (err.routine === '_bt_check_unique')
-                    return reject({ code: 409, error: 'Duplicate key' });
-                if (err.routine === 'ExecConstraints' || err.routine === 'ParseFuncOrColumn' || err.routine === 'pg_strtoint32')
+                if (isBadRequest(err))
                     return reject({ code: 400, error: 'Bad Request' });
                 return reject({ code: 500, error: 'Error connecting to database' });
             });
         });
     }
+}
+
+function poolExists(pool, options) {
+    const lifetime = process.env.SESSION_LIFETIME_SEC ?
+        process.env.SESSION_LIFETIME_SEC * 1000 : new Date(options.givenDate).getTime() + 1000 * 60 * 60 * 24;
+    return pool.options.user === options.user &&
+        pool.options.password === options.password &&
+        pool.options.host === options.host &&
+        pool.options.port === options.port &&
+        pool.options.database === options.database &&
+        new Date(pool.options.givenDate).getTime() < new Date(Date.now() + lifetime).getDate();
+}
+
+function isBadRequest(err) {
+    return err.routine === 'ExecConstraints'
+        || err.routine === 'ParseFuncOrColumn'
+        || err.routine === 'pg_strtoint32'
+        || err.routine === 'ri_ReportViolation';
 }

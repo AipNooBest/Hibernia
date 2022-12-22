@@ -76,7 +76,7 @@ module.exports = {
                 message: 'Bad request'
             });
         }
-        user.new(req.pool, user)
+        user.new(req.pool, args)
             .then(r => res.status(200).json(r))
             .catch(e => {
                 console.log(e);
