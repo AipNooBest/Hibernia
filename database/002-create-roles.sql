@@ -1,6 +1,6 @@
 /* Разграничение ролей */
 
-CREATE ROLE admin;
+CREATE ROLE admin WITH CREATEROLE;
 CREATE ROLE teacher;
 CREATE ROLE pupil;
 
@@ -10,5 +10,7 @@ CREATE ROLE pupil;
 GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES, TRIGGER ON ALL TABLES IN SCHEMA public TO admin;
 GRANT SELECT, INSERT ON ALL TABLES IN SCHEMA public TO teacher;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO pupil;
+
+GRANT USAGE ON SEQUENCE pupils_id_seq TO teacher;
 
 REVOKE SELECT ON group_management FROM pupil;
