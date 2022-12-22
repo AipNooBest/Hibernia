@@ -20,3 +20,8 @@ CREATE POLICY allow_teacher_on_pupils ON pupils FOR ALL TO teacher USING (true);
 CREATE POLICY allow_teacher_on_accounting ON accounting FOR ALL TO teacher USING (true);
 CREATE POLICY allow_teacher_on_concert_dance_lists ON concert_dance_lists FOR ALL TO teacher USING (true);
 CREATE POLICY allow_teacher_on_costume_ownership ON costume_ownership FOR ALL TO teacher USING (true);
+
+CREATE POLICY allow_admin_on_pupils ON pupils FOR ALL TO admin USING (true);
+CREATE POLICY allow_admin_on_accounting ON accounting FOR ALL TO admin USING (true);
+CREATE POLICY allow_admin_on_concert_dance_lists ON concert_dance_lists FOR ALL TO admin USING (true);
+CREATE POLICY allow_admin_on_costume_ownership ON costume_ownership FOR ALL TO admin USING (true);

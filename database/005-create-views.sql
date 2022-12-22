@@ -4,7 +4,8 @@ CREATE VIEW view_pupils AS
            age,
            CASE WHEN sex = 0::bit THEN 'Мужской' ELSE 'Женский' END as sex,
            (SELECT status.status FROM status WHERE status.id = pupils.status),
-           (SELECT name FROM groups WHERE id = group_id)            AS group_name
+           (SELECT name FROM groups WHERE id = group_id)            AS group_name,
+            username
     FROM pupils
     WHERE CASE
               WHEN pg_has_role(current_user, 'teacher', 'member') THEN true

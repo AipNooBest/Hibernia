@@ -119,6 +119,24 @@ const doc = {
             username: "danilov",
             password: "epic"
         },
+        UserList: [
+            {
+                "full_name": "Яковлева Таисия Геннадьевна",
+                "age": 26,
+                "sex": "Женский",
+                "status": "Постоянно посещает занятия",
+                "group_name": "Новые Черемушки",
+                "username": "yakovleva"
+            },
+            {
+                "full_name": "Власова Ангелина Матвеевна",
+                "age": 9,
+                "sex": "Женский",
+                "status": "Заморожен",
+                "group_name": "Проспект Вернадского",
+                "username": "vlasovaa"
+            },
+        ],
         Concerts: [
             {
                 "id": 1,
