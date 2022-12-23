@@ -24,6 +24,7 @@ services:
       DB_NAME: ${DB_NAME:-hibernia}
       NODE_ENV: ${NODE_ENV:-development}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      SESSION_LIFETIME_SEC: ${SESSION_LIFETIME_SEC:-86400}
     ports:
       - "${API_PORT:-3000}:3000"
     # По-хорошему исходники надо все хранить в src, ибо тут они будут вместе с database, но пока так
@@ -54,7 +55,7 @@ services:
     container_name: hibernia_frontend
     restart: always
     environment:
-      VITE_APP_API: http://localhost:${API_PORT:-3000}
+      VITE_APP_API: ${API_URL:-http://localhost:3000}
     ports:
       - "${FRONTEND_PORT:-80}:4173"
     volumes:
