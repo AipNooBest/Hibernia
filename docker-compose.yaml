@@ -48,3 +48,16 @@ services:
     image: redis
     container_name: hibernia_redis
     restart: always
+
+  frontend:
+    image: node
+    container_name: hibernia_frontend
+    restart: always
+    environment:
+      VITE_APP_API: http://localhost:${API_PORT:-3000}
+    ports:
+      - "${FRONTEND_PORT:-80}:4173"
+    volumes:
+      - ./HiberniaCRM:/app
+    working_dir: /app
+    command: bash -c "npm install && npm run build && npm run preview"
