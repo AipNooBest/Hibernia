@@ -51,6 +51,39 @@ $$ LANGUAGE plpgsql;
 REVOKE ALL ON PROCEDURE delete_pupil(text) FROM PUBLIC;
 GRANT EXECUTE ON PROCEDURE delete_pupil(text) TO teacher;
 
+-- Аналогично с учителем
+CREATE OR REPLACE PROCEDURE delete_teacher(id int)
+SECURITY DEFINER
+AS $$
+    DECLARE username text;
+BEGIN
+    SELECT teachers.username INTO username FROM teachers WHERE teachers.id = $1;
+    IF username IS NULL THEN
+        RAISE EXCEPTION 'Учитель с ID % не существует', $1;
+    END IF;
+    DELETE FROM teachers WHERE teachers.id = $1;
+    EXECUTE format('DROP USER %I', username);
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE delete_teacher(int) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE delete_teacher(int) TO admin;
+
+CREATE OR REPLACE PROCEDURE delete_teacher(username text)
+SECURITY DEFINER
+AS $$
+    DECLARE user_id int;
+BEGIN
+    SELECT teachers.id INTO user_id FROM teachers WHERE teachers.username = $1;
+    IF user_id IS NULL THEN
+        RAISE EXCEPTION 'Учитель с ником % не существует', $1;
+    END IF;
+    DELETE FROM teachers WHERE teachers.id = user_id;
+    EXECUTE format('DROP USER %I', username);
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE delete_teacher(text) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE delete_teacher(text) TO admin;
+
 /* Процедура для добавления ученика в БД
  * Плюс создание пользователя БД с именем, введённым при добавлении ученика
  * Если ник при добавлении ученика не введен, то он генерируется из ФИО ученика */
@@ -71,6 +104,25 @@ END;
 $$ LANGUAGE plpgsql;
 REVOKE ALL ON PROCEDURE add_pupil(text, text, text, int, bit, date, smallint, int, text, text) FROM PUBLIC;
 GRANT EXECUTE ON PROCEDURE add_pupil(text, text, text, int, bit, date, smallint, int, text, text) TO teacher;
+
+-- Аналогично с учителем, но процедуру может вызывать только админ БД
+CREATE OR REPLACE PROCEDURE add_teacher(last_name text, first_name text, second_name text, age int, sex bit, experience numeric, username text, password text)
+    SECURITY DEFINER
+AS $$
+BEGIN
+    IF username IS NULL THEN
+        username := transliterate(last_name || SUBSTR(first_name, 1, 3) || SUBSTR(second_name, 1, 3));
+    END IF;
+    IF user_exists(username) THEN
+        RAISE EXCEPTION 'Пользователь с ником % уже существует', username;
+    END IF;
+    INSERT INTO teachers (first_name, second_name, last_name, experience, age, sex, username)
+    VALUES ($2, $3, $1, $6, $4, $5, $7);
+    EXECUTE format('CREATE USER %I WITH PASSWORD %L IN ROLE %I', username, password, 'teacher');
+END;
+$$ LANGUAGE plpgsql;
+REVOKE ALL ON PROCEDURE add_teacher(text, text, text, int, bit, numeric, text, text) FROM PUBLIC;
+GRANT EXECUTE ON PROCEDURE add_teacher(text, text, text, int, bit, numeric, text, text) TO admin;
 
 -- Добавление нового концерта
 CREATE OR REPLACE PROCEDURE add_concert(date date, place text)

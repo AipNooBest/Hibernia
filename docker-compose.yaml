@@ -19,7 +19,7 @@ services:
     container_name: hibernia_backend
     restart: always
     environment:
-      DB_HOST: ${DB_HOST:-localhost}
+      DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: 5432 # Для обращения к контейнеру postgres не юзаем переменную окружения
       DB_NAME: ${DB_NAME:-hibernia}
       NODE_ENV: ${NODE_ENV:-development}

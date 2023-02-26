@@ -18,7 +18,10 @@ module.exports = {
                 if (err.routine === 'auth_failed')
                     return reject({ code: 401, error: 'Invalid username or password' });
 
-                console.log('Connected to database');
+                console.error(err);
+                if (process.env.NODE_ENV === 'development')
+                    return reject ({ code: 500, error: err.message, routine: err.routine });
+                return reject({ code: 500, error: 'Internal Server Error' });
             })
         })
     },
