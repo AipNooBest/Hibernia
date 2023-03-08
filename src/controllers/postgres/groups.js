@@ -1,4 +1,4 @@
-const groups = require('../services/groups');
+const groups = require('../../services/postgres/groups');
 
 module.exports = {
     get: (req, res) => {

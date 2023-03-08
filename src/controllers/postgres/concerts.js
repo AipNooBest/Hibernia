@@ -1,4 +1,4 @@
-const concerts = require('../services/concerts');
+const concerts = require('../../services/postgres/concerts');
 
 module.exports = {
     get: (req, res) => {

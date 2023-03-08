@@ -1,5 +1,5 @@
-const db = require('../utils/database')
-const { isValidYear, isValidMonth } = require('../utils/security')
+const db = require('../../utils/postgres')
+const { isValidYear, isValidMonth } = require('../../utils/security')
 
 module.exports = {
     visits: (pool, start_year, start_month, end_year, end_month) => {

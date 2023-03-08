@@ -1,4 +1,4 @@
-const costumes = require('../services/costumes');
+const costumes = require('../../services/postgres/costumes');
 
 module.exports = {
     get: (req, res) => {

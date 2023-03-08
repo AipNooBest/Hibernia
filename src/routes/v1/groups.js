@@ -1,5 +1,5 @@
-const groups = require('../../controllers/groups');
-const session = require('../../middlewares/session');
+const groups = require('../../controllers/postgres/groups');
+const session = require('../../middlewares/postgres_session');
 const router = require('express').Router();
 
 router.get('/', session.auth, groups.get);

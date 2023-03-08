@@ -1,5 +1,5 @@
-const costumes = require('../../controllers/costumes');
-const session = require('../../middlewares/session');
+const costumes = require('../../controllers/postgres/costumes');
+const session = require('../../middlewares/postgres_session');
 const router = require('express').Router();
 
 router.get('/', session.auth, costumes.get);

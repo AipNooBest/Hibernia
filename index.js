@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const routes = require('./src/routes/v1');
+const routes_v2 = require('./src/routes/v2');
 const redis = require('./src/utils/redis');
 const app = express();
 const port = 3000;
@@ -19,6 +20,7 @@ app.use(function (req, res, next) {
     next();
 });
 app.use('/api/v1', routes);
+app.use('/api/v2', routes_v2);
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}!`)
 });
