@@ -34,6 +34,43 @@ module.exports = {
                     reject({ code: 500, error: err.message })
                 })
         });
+    },
+    close: (pool) => {
+        return new Promise((resolve, reject) => {
+            pool.close()
+                .then(() => resolve())
+                .catch(err => {
+                    console.error(err)
+                    reject({ code: 500, error: err.message })
+                })
+        });
+    },
+    // TODO: допилить конкретно эту часть: исправить ошибку с транзакциями
+    transaction: (pool, queries) => {
+        return new Promise(async (resolve, reject) => {
+            const session = pool.startSession()
+            try {
+                await session.withTransaction(() => {
+                    const promises = [];
+                    queries.forEach(query => {
+                        promises.push(pool.db(process.env.MONGO_DB).command(query));
+                    });
+                    Promise.all(promises)
+                        .then(() => {
+                            resolve()
+                        })
+                        .catch(err => {
+                            console.error(err)
+                            reject({code: 500, error: err.message})
+                        })
+                })
+            } catch (e) {
+                console.error(e)
+                reject({code: 500, error: e.message})
+            } finally {
+                await session.endSession()
+            }
+        });
     }
 }
 
