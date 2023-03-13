@@ -1,5 +1,7 @@
-db.runCommand( {
-    createRole: "teacher",
+db = db.getSiblingDB('hibernia')
+
+db.createRole( {
+    role: "teacher",
     privileges: [
         { resource: { db: "hibernia", collection: "" }, actions: [ "find", "insert", "update", "remove" ] },
         { resource: { db: "hibernia", collection: "visits" }, actions: [ "find", "insert", "update", "remove" ] },
@@ -8,8 +10,8 @@ db.runCommand( {
     roles: []
 })
 
-db.runCommand( {
-    createRole: "student",
+db.createRole( {
+    role: "student",
     privileges: [
         { resource: { db: "hibernia", collection: "" }, actions: [ "find" ] }
     ],

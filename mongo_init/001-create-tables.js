@@ -1,4 +1,4 @@
-db = getSiblingDB('hibernia')
+db = db.getSiblingDB('hibernia')
 
 db.createCollection('visits', {
     validator: {
