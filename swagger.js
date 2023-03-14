@@ -119,6 +119,13 @@ const doc = {
             username: "danilov",
             password: "epic"
         },
+        UserAddV2: {
+            full_name: "Данилов Денис Олегович",
+            membership_id: "641076e3ef13507c4277158a",
+            username: "danilov",
+            password: "pupil",
+            discount: 500
+        },
         UserList: [
             {
                 "full_name": "Яковлева Таисия Геннадьевна",
