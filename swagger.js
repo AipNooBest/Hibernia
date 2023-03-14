@@ -1,6 +1,6 @@
 const swaggerAutogen = require('swagger-autogen')({openapi: '3.0.2'});
 
-const outputFile = './docs/swagger_output.json';
+const outputFile = './docs/v1.json';
 const endpointsFiles = ['./src/routes/v1/index.js'];
 
 const doc = {
@@ -118,13 +118,6 @@ const doc = {
             group_id: 1,
             username: "danilov",
             password: "epic"
-        },
-        UserAddV2: {
-            full_name: "Данилов Денис Олегович",
-            membership_id: "641076e3ef13507c4277158a",
-            username: "danilov",
-            password: "pupil",
-            discount: 500
         },
         UserList: [
             {

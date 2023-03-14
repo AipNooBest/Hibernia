@@ -17,8 +17,7 @@ module.exports = {
         // #swagger.tags = ['Users']
         // #swagger.summary = Создание нового пользователя
         // #swagger.description = Создание нового пользователя. Возвращает id созданного пользователя.
-        // #swagger.parameters['user'] = { in: 'body', schema: { $ref: "#/definitions/UserNewV2" }}
-        // #swagger.responses[200] = { schema: { $ref: "#/definitions/UserNewResponse" }}
+        // #swagger.parameters['user'] = { in: 'body', schema: { $ref: "#/definitions/UserAdd" }}
         user.new(req.pool, req.body)
             .then(r => res.status(200).json(r))
             .catch(e => {
