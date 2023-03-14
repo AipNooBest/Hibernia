@@ -11,8 +11,8 @@ module.exports = {
                     return true;
                 }
             });
-            const pool = new MongoClient(`mongodb://${options.user}:${options.password}@${options.host}:${options.port}`);
-            pool.db(options.database).command({ ping: 1 })
+            const pool = new MongoClient(`mongodb://${options.user}:${options.password}@${options.host}:${options.port}/${options.database}`);
+            pool.db().command({ ping: 1 })
                 .then((_) => resolve(pool))
                 .catch((err) => {
                 console.error(err);
@@ -27,9 +27,11 @@ module.exports = {
     // https://www.mongodb.com/docs/v5.0/reference/command
     handle: (pool, query) => {
         return new Promise((resolve, reject) => {
-            pool.db(process.env.MONGO_DB).command(query)
+            pool.db().command(query)
                 .then(doc => resolve(doc))
                 .catch(err => {
+                    if (err.codeName === 'AuthenticationFailed')
+                        return reject({ code: 401, error: "Unauthorized"});
                     console.error(err)
                     reject({ code: 500, error: err.message })
                 })

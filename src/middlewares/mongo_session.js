@@ -19,7 +19,7 @@ module.exports = {
                 await redis.remove(token);
                 return res.status(401).json({code: 401, error: 'Unauthorized'});
             }
-            req.pool = new MongoClient(`mongodb://${options.user}:${options.password}@${options.host}:${options.port}`)
+            req.pool = new MongoClient(`mongodb://${options.user}:${options.password}@${options.host}:${options.port}/${options.database}`)
             req.token = token;
             next();
         }).catch((e) => {

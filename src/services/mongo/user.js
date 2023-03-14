@@ -24,7 +24,7 @@ module.exports = {
                 }
             });
 
-            if (!price) {
+            if (!price && price.cursor.firstBatch.length < 1) {
                 return reject('Membership not found');
             }
 

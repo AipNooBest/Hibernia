@@ -11,7 +11,7 @@ db.createRole( {
 })
 
 db.createRole( {
-    role: "student",
+    role: "pupil",
     privileges: [
         { resource: { db: "hibernia", collection: "" }, actions: [ "find" ] }
     ],
