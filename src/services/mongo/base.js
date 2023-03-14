@@ -27,7 +27,7 @@ module.exports = {
                     },
                     projection: {_id: 0, person: 1, year: 1, month: 1, visits: 1}
                 })
-                .then(r => resolve(r))
+                .then(r => resolve(r.cursor.firstBatch))
                 .catch(e => reject(e));
         });
     }

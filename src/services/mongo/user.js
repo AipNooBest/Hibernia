@@ -10,7 +10,17 @@ module.exports = {
                     $expr: { $ne: [ "$paid", "$total" ] }
                 }
             })
-                .then(r => resolve(r))
+                .then(r => {
+                    let people = [];
+                    r.cursor.firstBatch.forEach(v => {
+                        people.push({
+                            name: v.person,
+                            visits: v.visits,
+                            debt: v.total - v.paid,
+                        });
+                    });
+                    resolve(people);
+                })
                 .catch(e => reject(e));
         });
     },
