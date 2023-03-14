@@ -53,24 +53,17 @@ module.exports = {
             const session = pool.startSession()
             try {
                 await session.withTransaction(() => {
-                    const promises = [];
-                    queries.forEach(query => {
+                    let promises = [];
+                    for (const query of queries) {
                         promises.push(pool.db(process.env.MONGO_DB).command(query));
-                    });
-                    Promise.all(promises)
-                        .then(() => {
-                            resolve()
-                        })
-                        .catch(err => {
-                            console.error(err)
-                            reject({code: 500, error: err.message})
-                        })
+                    }
+                    return Promise.all(promises).then(() => session.endSession())
                 })
             } catch (e) {
                 console.error(e)
                 reject({code: 500, error: e.message})
             } finally {
-                await session.endSession()
+                resolve()
             }
         });
     }

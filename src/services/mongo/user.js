@@ -34,19 +34,19 @@ module.exports = {
                     createUser: userArr[2],
                     pwd: userArr[3],
                     roles: [
-                        { role: "student", db: "hibernia" }
+                        { role: "pupil", db: "hibernia" }
                     ]
                 },
                 {
                     insert: 'visits',
-                    document: {
+                    documents: [{
                         person: userArr[0],
                         membership: userArr[1],
                         visits: 0,
                         paid: 0,
                         discount: userArr[4],
                         total: price - userArr[4],
-                    }
+                    }]
                 }
             ])
                 .then(r => resolve(r))
