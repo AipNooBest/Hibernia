@@ -1,5 +1,5 @@
-const db = require('../utils/database')
-const security = require('../utils/security')
+const db = require('../../utils/postgres')
+const security = require('../../utils/security')
 
 module.exports = {
     get: (pool) => {

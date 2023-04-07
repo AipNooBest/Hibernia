@@ -1,5 +1,5 @@
-const user = require('../../controllers/user.js');
-const session = require('../../middlewares/session');
+const user = require('../../controllers/postgres/user.js');
+const session = require('../../middlewares/postgres_session');
 const router = require('express').Router();
 
 

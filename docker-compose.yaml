@@ -38,7 +38,7 @@ services:
     container_name: hibernia_swagger
     restart: always
     environment:
-      URL: "./docs/swagger_output.json"
+      URL: "./docs/v1.json"
       DEFAULT_MODELS_EXPAND_DEPTH: -1
     ports:
       - "${SWAGGER_PORT:-8080}:8080"
@@ -49,6 +49,15 @@ services:
     image: redis
     container_name: hibernia_redis
     restart: always
+
+  mongo:
+    image: mongo
+    container_name: hibernia_mongo
+    restart: always
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - ./mongo_init:/docker-entrypoint-initdb.d/
 
   frontend:
     image: node

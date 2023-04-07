@@ -1,4 +1,4 @@
-const user = require('../services/user.js');
+const user = require('../../services/postgres/user.js');
 
 module.exports = {
     profile: (req, res) => {

@@ -1,4 +1,4 @@
-const base = require('../services/base');
+const base = require('../../services/mongo/base');
 
 module.exports = {
     visits: (req, res) => {
