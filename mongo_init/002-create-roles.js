@@ -1,6 +1,6 @@
 db = db.getSiblingDB('hibernia')
 
-db.createRole( {
+db.createRole({
     role: "teacher",
     privileges: [
         { resource: { db: "hibernia", collection: "" }, actions: [ "find", "insert", "update", "remove" ] },
@@ -10,7 +10,7 @@ db.createRole( {
     roles: []
 })
 
-db.createRole( {
+db.createRole({
     role: "pupil",
     privileges: [
         { resource: { db: "hibernia", collection: "" }, actions: [ "find" ] }
